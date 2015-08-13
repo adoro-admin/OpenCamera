@@ -71,14 +71,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 	private int [] gui_location = new int[2];
 	private DecimalFormat decimalFormat = new DecimalFormat("#0.0");
 
-	/*private float free_memory_gb = -1.0f;
-	private long last_free_memory_time = 0;*/
-
-	private IntentFilter battery_ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-	private boolean has_battery_frac = false;
-	private float battery_frac = 0.0f;
-	private long last_battery_time = 0;
-
 	private Bitmap location_bitmap = null;
 	private Bitmap location_off_bitmap = null;
 	private Rect location_dest = new Rect();
@@ -93,8 +85,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 	private RectF thumbnail_anim_src_rect = new RectF();
 	private RectF thumbnail_anim_dst_rect = new RectF();
 	private Matrix thumbnail_anim_matrix = new Matrix();
-
-	private ToastBoxer stopstart_video_toast = new ToastBoxer();
 	
 	// camera properties which are saved in bundle, but not stored in preferences (so will be remembered if the app goes into background, but not after restart)
 	private int cameraId = 0;
@@ -788,10 +778,10 @@ public class MyApplicationInterface implements ApplicationInterface {
 		Preview preview  = main_activity.getPreview();
 		CameraController camera_controller = preview.getCameraController();
 		int ui_rotation = preview.getUIRotation();
-		boolean has_level_angle = preview.hasLevelAngle();
+		/*boolean has_level_angle = preview.hasLevelAngle();
 		double level_angle = preview.getLevelAngle();
 		boolean has_geo_direction = preview.hasGeoDirection();
-		double geo_direction = preview.getGeoDirection();
+		double geo_direction = preview.getGeoDirection();*/
 		boolean ui_placement_right = main_activity.getUIPlacementRight();
 		if( inImmersiveMode() ) {
 			String immersive_mode = sharedPreferences.getString(PreferenceKeys.getImmersiveModePreferenceKey(), "immersive_mode_low_profile");
@@ -1111,7 +1101,7 @@ public class MyApplicationInterface implements ApplicationInterface {
 		if( camera_controller != null && !preview.isPreviewPaused() ) {
 			/*canvas.drawText("PREVIEW", canvas.getWidth() / 2,
 					canvas.getHeight() / 2, p);*/
-			boolean draw_angle = has_level_angle && sharedPreferences.getBoolean(PreferenceKeys.getShowAnglePreferenceKey(), true);
+			/*boolean draw_angle = has_level_angle && sharedPreferences.getBoolean(PreferenceKeys.getShowAnglePreferenceKey(), true);
 			boolean draw_geo_direction = has_geo_direction && sharedPreferences.getBoolean(PreferenceKeys.getShowGeoDirectionPreferenceKey(), true);
 			if( draw_angle ) {
 				int color = Color.WHITE;
@@ -1149,7 +1139,7 @@ public class MyApplicationInterface implements ApplicationInterface {
 				}
 				String string = " " + getContext().getResources().getString(R.string.direction) + ": " + Math.round(geo_angle) + (char)0x00B0;
 				drawTextWithBackground(canvas, p, string, color, Color.BLACK, canvas.getWidth() / 2, text_base_y, false, ybounds_text, true);
-			}
+			}*/
 			if( preview.isOnTimer() ) {
 				long remaining_time = (preview.getTimerEndTime() - System.currentTimeMillis() + 999)/1000;
 				if( MyDebug.LOG )
@@ -1204,42 +1194,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 				drawTextWithBackground(canvas, p, string, Color.rgb(255, 235, 59), Color.BLACK, canvas.getWidth() / 2, text_base_y - pixels_offset_y, false, ybounds_text, true); // Yellow 500
 			}
 		}
-
-		if( sharedPreferences.getBoolean(PreferenceKeys.getShowBatteryPreferenceKey(), true) ) {
-			if( !this.has_battery_frac || System.currentTimeMillis() > this.last_battery_time + 60000 ) {
-				// only check periodically - unclear if checking is costly in any way
-				Intent batteryStatus = main_activity.registerReceiver(null, battery_ifilter);
-				int battery_level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-				int battery_scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-				has_battery_frac = true;
-				battery_frac = battery_level/(float)battery_scale;
-				last_battery_time = System.currentTimeMillis();
-				if( MyDebug.LOG )
-					Log.d(TAG, "Battery status is " + battery_level + " / " + battery_scale + " : " + battery_frac);
-			}
-			//battery_frac = 0.2999f; // test
-			int battery_x = (int) (5 * scale + 0.5f); // convert dps to pixels
-			int battery_y = top_y;
-			int battery_width = (int) (5 * scale + 0.5f); // convert dps to pixels
-			int battery_height = 4*battery_width;
-			if( ui_rotation == 90 || ui_rotation == 270 ) {
-				int diff = canvas.getWidth() - canvas.getHeight();
-				battery_x += diff/2;
-				battery_y -= diff/2;
-			}
-			if( ui_rotation == 90 ) {
-				battery_y = canvas.getHeight() - battery_y - battery_height;
-			}
-			if( ui_rotation == 180 ) {
-				battery_x = canvas.getWidth() - battery_x - battery_width;
-			}
-			p.setColor(Color.WHITE);
-			p.setStyle(Paint.Style.STROKE);
-			canvas.drawRect(battery_x, battery_y, battery_x+battery_width, battery_y+battery_height, p);
-			p.setColor(battery_frac >= 0.3f ? Color.rgb(37, 155, 36) : Color.rgb(244, 67, 54)); // Green 500 or Red 500
-			p.setStyle(Paint.Style.FILL);
-			canvas.drawRect(battery_x+1, battery_y+1+(1.0f-battery_frac)*(battery_height-2), battery_x+battery_width-1, battery_y+battery_height-1, p);
-		}
 		
 		boolean store_location = sharedPreferences.getBoolean(PreferenceKeys.getLocationPreferenceKey(), false);
 		final int location_size = (int) (20 * scale + 0.5f); // convert dps to pixels
@@ -1271,68 +1225,10 @@ public class MyApplicationInterface implements ApplicationInterface {
 				canvas.drawBitmap(location_off_bitmap, null, location_dest, p);
 			}
 		}
-		
-		if( sharedPreferences.getBoolean(PreferenceKeys.getShowTimePreferenceKey(), true) ) {
-			p.setTextSize(14 * scale + 0.5f); // convert dps to pixels
-			p.setTextAlign(Paint.Align.LEFT);
-			int location_x = (int) (50 * scale + 0.5f); // convert dps to pixels
-			int location_y = top_y;
-			if( ui_rotation == 90 || ui_rotation == 270 ) {
-				int diff = canvas.getWidth() - canvas.getHeight();
-				location_x += diff/2;
-				location_y -= diff/2;
-			}
-			if( ui_rotation == 90 ) {
-				location_y = canvas.getHeight() - location_y - location_size;
-			}
-			if( ui_rotation == 180 ) {
-				location_x = canvas.getWidth() - location_x;
-				p.setTextAlign(Paint.Align.RIGHT);
-			}
-	        Calendar c = Calendar.getInstance();
-	        // n.b., DateFormat.getTimeInstance() ignores user preferences such as 12/24 hour or date format, but this is an Android bug.
-	        // Whilst DateUtils.formatDateTime doesn't have that problem, it doesn't print out seconds! See:
-	        // http://stackoverflow.com/questions/15981516/simpledateformat-gettimeinstance-ignores-24-hour-format
-	        // http://daniel-codes.blogspot.co.uk/2013/06/how-to-correctly-format-datetime.html
-	        // http://code.google.com/p/android/issues/detail?id=42104
-	        String current_time = DateFormat.getTimeInstance().format(c.getTime());
-	        //String current_time = DateUtils.formatDateTime(getContext(), c.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME);
-	        drawTextWithBackground(canvas, p, current_time, Color.WHITE, Color.BLACK, location_x, location_y, true);
-	    }
-
-		if( camera_controller != null && sharedPreferences.getBoolean(PreferenceKeys.getShowFreeMemoryPreferenceKey(), true) ) {
-			p.setTextSize(14 * scale + 0.5f); // convert dps to pixels
-			p.setTextAlign(Paint.Align.LEFT);
-			int location_x = (int) (50 * scale + 0.5f); // convert dps to pixels
-			int location_y = top_y + (int) (16 * scale + 0.5f); // convert dps to pixels
-			if( ui_rotation == 90 || ui_rotation == 270 ) {
-				int diff = canvas.getWidth() - canvas.getHeight();
-				location_x += diff/2;
-				location_y -= diff/2;
-			}
-			if( ui_rotation == 90 ) {
-				location_y = canvas.getHeight() - location_y - location_size;
-			}
-			if( ui_rotation == 180 ) {
-				location_x = canvas.getWidth() - location_x;
-				p.setTextAlign(Paint.Align.RIGHT);
-			}
-			/*long time_now = System.currentTimeMillis();
-			if( free_memory_gb < 0.0f || time_now > last_free_memory_time + 1000 ) {
-				long free_mb = main_activity.freeMemory();
-				if( free_mb >= 0 ) {
-					free_memory_gb = free_mb/1024.0f;
-					last_free_memory_time = time_now;
-				}
-			}
-			if( free_memory_gb >= 0.0f ) {
-				drawTextWithBackground(canvas, p, getContext().getResources().getString(R.string.free_memory) + ": " + decimalFormat.format(free_memory_gb) + "GB", Color.WHITE, Color.BLACK, location_x, location_y, true);
-			}*/
-		}
 
 		canvas.restore();
 		
-		if( camera_controller != null && !preview.isPreviewPaused() && has_level_angle && sharedPreferences.getBoolean(PreferenceKeys.getShowAngleLinePreferenceKey(), false) ) {
+		/*if( camera_controller != null && !preview.isPreviewPaused() && has_level_angle && sharedPreferences.getBoolean(PreferenceKeys.getShowAngleLinePreferenceKey(), false) ) {
 			// n.b., must draw this without the standard canvas rotation
 			int radius_dps = (ui_rotation == 90 || ui_rotation == 270) ? 60 : 80;
 			int radius = (int) (radius_dps * scale + 0.5f); // convert dps to pixels
@@ -1345,10 +1241,10 @@ public class MyApplicationInterface implements ApplicationInterface {
 	    		angle += 90.0;
 	    		break;
 		    }
-			/*if( MyDebug.LOG ) {
+			*//*if( MyDebug.LOG ) {
 				Log.d(TAG, "orig_level_angle: " + orig_level_angle);
 				Log.d(TAG, "angle: " + angle);
-			}*/
+			}*//*
 			int cx = canvas.getWidth()/2;
 			int cy = canvas.getHeight()/2;
 			
@@ -1398,7 +1294,7 @@ public class MyApplicationInterface implements ApplicationInterface {
 			p.setAlpha(255);
 
 			canvas.restore();
-		}
+		}*/
 
 		if( preview.isFocusWaiting() || preview.isFocusRecentSuccess() || preview.isFocusRecentFailure() ) {
 			int size = (int) (50 * scale + 0.5f); // convert dps to pixels
@@ -1538,7 +1434,7 @@ public class MyApplicationInterface implements ApplicationInterface {
 
         boolean success = false;
         Bitmap bitmap = null;
-		if( getAutoStabilisePref() && main_activity.getPreview().hasLevelAngle() )
+		/*if( getAutoStabilisePref() && main_activity.getPreview().hasLevelAngle() )
 		{
 			double level_angle = main_activity.getPreview().getLevelAngle();
 			//level_angle = -129;
@@ -1569,13 +1465,13 @@ public class MyApplicationInterface implements ApplicationInterface {
     				Log.d(TAG, "decoded bitmap size " + width + ", " + height);
     				Log.d(TAG, "bitmap size: " + width*height*4);
     			}
-    			/*for(int y=0;y<height;y++) {
+    			*//*for(int y=0;y<height;y++) {
     				for(int x=0;x<width;x++) {
     					int col = bitmap.getPixel(x, y);
     					col = col & 0xffff0000; // mask out red component
     					bitmap.setPixel(x, y, col);
     				}
-    			}*/
+    			}*//*
     			if( main_activity.test_low_memory ) {
     		    	level_angle = 45.0;
     			}
@@ -1675,7 +1571,7 @@ public class MyApplicationInterface implements ApplicationInterface {
     	            System.gc();
     			}
 			}
-		}
+		}*/
 		String preference_stamp = this.getStampPref();
 		String preference_textstamp = this.getTextStampPref();
 		boolean dategeo_stamp = preference_stamp.equals("preference_stamp_yes");

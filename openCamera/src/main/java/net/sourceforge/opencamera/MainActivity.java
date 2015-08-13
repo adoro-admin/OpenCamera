@@ -1,39 +1,5 @@
 package net.sourceforge.opencamera;
 
-import net.sourceforge.opencamera.CameraController.CameraController;
-import net.sourceforge.opencamera.CameraController.CameraControllerManager2;
-import net.sourceforge.opencamera.Preview.Preview;
-import net.sourceforge.opencamera.UI.FolderChooserDialog;
-import net.sourceforge.opencamera.UI.PopupView;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.media.AudioAttributes;
-import android.media.AudioManager;
-import android.media.CamcorderProfile;
-import android.media.SoundPool;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.ParcelFileDescriptor;
-import android.os.StatFs;
-import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -47,6 +13,25 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ParcelFileDescriptor;
+import android.os.StatFs;
+import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -70,6 +55,20 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.ZoomControls;
 
+import net.sourceforge.opencamera.CameraController.CameraController;
+import net.sourceforge.opencamera.CameraController.CameraControllerManager2;
+import net.sourceforge.opencamera.Preview.Preview;
+import net.sourceforge.opencamera.UI.FolderChooserDialog;
+import net.sourceforge.opencamera.UI.PopupView;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	private SensorManager mSensorManager = null;
@@ -80,7 +79,6 @@ public class MainActivity extends Activity {
 	private int current_orientation = 0;
 	private OrientationEventListener orientationEventListener = null;
 	private boolean supports_auto_stabilise = false;
-	/*private boolean supports_force_video_4k = false;*/
 	private boolean supports_camera2 = false;
 	private ArrayList<String> save_location_history = new ArrayList<String>();
 	private boolean camera_in_background = false; // whether the camera is covered by a fragment/dialog (such as settings or folder picker)
@@ -98,7 +96,6 @@ public class MainActivity extends Activity {
 	private boolean ui_placement_right = true;
 
 	private ToastBoxer switch_camera_toast = new ToastBoxer();
-	/*private ToastBoxer switch_video_toast = new ToastBoxer();*/
     private ToastBoxer screen_locked_toast = new ToastBoxer();
     private ToastBoxer changed_auto_stabilise_toast = new ToastBoxer();
 	private ToastBoxer exposure_lock_toast = new ToastBoxer();
@@ -146,15 +143,6 @@ public class MainActivity extends Activity {
 		if( MyDebug.LOG )
 			Log.d(TAG, "supports_auto_stabilise? " + supports_auto_stabilise);
 
-		// hack to rule out phones unlikely to have 4K video, so no point even offering the option!
-		// both S5 and Note 3 have 128MB standard and 512MB large heap (tested via Samsung RTL), as does Galaxy K Zoom
-		// also added the check for having 128MB standard heap, to support modded LG G2, which has 128MB standard, 256MB large - see https://sourceforge.net/p/opencamera/tickets/9/
-		/*if( activityManager.getMemoryClass() >= 128 || activityManager.getLargeMemoryClass() >= 512 ) {
-			supports_force_video_4k = true;
-		}
-		if( MyDebug.LOG )
-			Log.d(TAG, "supports_force_video_4k? " + supports_force_video_4k);
-*/
 		applicationInterface = new MyApplicationInterface(this, savedInstanceState);
 
 		initCamera2Support();
@@ -179,7 +167,7 @@ public class MainActivity extends Activity {
 		//updateFolderHistory("/sdcard/Pictures/OpenCameraTest");
 
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-		if( mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null ) {
+		/*if( mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null ) {
 			if( MyDebug.LOG )
 				Log.d(TAG, "found accelerometer");
 			mSensorAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -187,7 +175,7 @@ public class MainActivity extends Activity {
 		else {
 			if( MyDebug.LOG )
 				Log.d(TAG, "no support for accelerometer");
-		}
+		}*/
 		if( mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD) != null ) {
 			if( MyDebug.LOG )
 				Log.d(TAG, "found magnetic sensor");
@@ -394,13 +382,6 @@ public class MainActivity extends Activity {
 	    			}
 					return true;
 	    		}
-	    		/*else if( volume_keys.equals("volume_zoom") ) {
-	    			if( keyCode == KeyEvent.KEYCODE_VOLUME_UP )
-	    				this.zoomIn();
-	    			else
-	    				this.zoomOut();
-	                return true;
-	    		}*/
 	    		else if( volume_keys.equals("volume_exposure") ) {
 	    			if( preview.getCameraController() != null ) {
 		    			String value = sharedPreferences.getString(PreferenceKeys.getISOPreferenceKey(), preview.getCameraController().getDefaultISO());
@@ -466,36 +447,9 @@ public class MainActivity extends Activity {
 				preview.requestAutoFocus();
 	            return true;
 			}
-		/*case KeyEvent.KEYCODE_ZOOM_IN:
-			{
-				this.zoomIn();
-	            return true;
-			}
-		case KeyEvent.KEYCODE_ZOOM_OUT:
-			{
-				this.zoomOut();
-	            return true;
-			}*/
 		}
         return super.onKeyDown(keyCode, event); 
     }
-	
-	/*void setSeekbarZoom() {
-		if( MyDebug.LOG )
-			Log.d(TAG, "setSeekbarZoom");
-	    SeekBar zoomSeekBar = (SeekBar) findViewById(R.id.zoom_seekbar);
-		zoomSeekBar.setProgress(preview.getMaxZoom()-preview.getCameraController().getZoom());
-		if( MyDebug.LOG )
-			Log.d(TAG, "progress is now: " + zoomSeekBar.getProgress());
-	}
-	
-	public void zoomIn() {
-	    changeSeekbar((SeekBar) findViewById(R.id.zoom_seekbar), -1);
-	}
-	
-	public void zoomOut() {
-	    changeSeekbar((SeekBar) findViewById(R.id.zoom_seekbar), 1);
-	}*/
 	
 	public void changeExposure(int change) {
 	    changeSeekbar((SeekBar) findViewById(R.id.exposure_seekbar), change);
@@ -528,7 +482,7 @@ public class MainActivity extends Activity {
 	    }
 	}
 
-	private SensorEventListener accelerometerListener = new SensorEventListener() {
+	/*private SensorEventListener accelerometerListener = new SensorEventListener() {
 		@Override
 		public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		}
@@ -537,7 +491,7 @@ public class MainActivity extends Activity {
 		public void onSensorChanged(SensorEvent event) {
 			preview.onAccelerometerSensorChanged(event);
 		}
-	};
+	};*/
 	
 	private SensorEventListener magneticListener = new SensorEventListener() {
 		@Override
@@ -560,7 +514,7 @@ public class MainActivity extends Activity {
         // Note that we do it here rather than customising the theme's android:windowBackground, so this doesn't affect other views - in particular, the MyPreferenceFragment settings
 		getWindow().getDecorView().getRootView().setBackgroundColor(Color.BLACK);
 
-        mSensorManager.registerListener(accelerometerListener, mSensorAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        /*mSensorManager.registerListener(accelerometerListener, mSensorAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);*/
         mSensorManager.registerListener(magneticListener, mSensorMagnetic, SensorManager.SENSOR_DELAY_NORMAL);
         orientationEventListener.enable();
 
@@ -597,7 +551,7 @@ public class MainActivity extends Activity {
 			Log.d(TAG, "onPause");
         super.onPause();
 		closePopup();
-        mSensorManager.unregisterListener(accelerometerListener);
+        /*mSensorManager.unregisterListener(accelerometerListener);*/
         mSensorManager.unregisterListener(magneticListener);
         orientationEventListener.disable();
         applicationInterface.getLocationSupplier().freeLocationListeners();
@@ -2032,88 +1986,7 @@ public class MainActivity extends Activity {
     void cameraSetup() {
 		if( MyDebug.LOG )
 			Log.d(TAG, "cameraSetup");
-		/*if( this.supportsForceVideo4K() && preview.usingCamera2API() ) {
-			if( MyDebug.LOG )
-				Log.d(TAG, "using Camera2 API, so can disable the force 4K option");
-			this.disableForceVideo4K();
-		}
-		if( this.supportsForceVideo4K() && preview.getSupportedVideoSizes() != null ) {
-			for(CameraController.Size size : preview.getSupportedVideoSizes()) {
-				if( size.width >= 3840 && size.height >= 2160 ) {
-					if( MyDebug.LOG )
-						Log.d(TAG, "camera natively supports 4K, so can disable the force option");
-					this.disableForceVideo4K();
-				}
-			}
-		}*/
 
-    	/*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		{
-			if( MyDebug.LOG )
-				Log.d(TAG, "set up zoom");
-			if( MyDebug.LOG )
-				Log.d(TAG, "has_zoom? " + preview.supportsZoom());
-		    ZoomControls zoomControls = (ZoomControls) findViewById(R.id.zoom);
-		    SeekBar zoomSeekBar = (SeekBar) findViewById(R.id.zoom_seekbar);
-
-			if( preview.supportsZoom() ) {
-				if( sharedPreferences.getBoolean(PreferenceKeys.getShowZoomControlsPreferenceKey(), false) ) {
-				    zoomControls.setIsZoomInEnabled(true);
-			        zoomControls.setIsZoomOutEnabled(true);
-			        zoomControls.setZoomSpeed(20);
-
-			        zoomControls.setOnZoomInClickListener(new View.OnClickListener(){
-			            public void onClick(View v){
-			            	zoomIn();
-			            }
-			        });
-				    zoomControls.setOnZoomOutClickListener(new View.OnClickListener(){
-				    	public void onClick(View v){
-				    		zoomOut();
-				        }
-				    });
-					if( !applicationInterface.inImmersiveMode() ) {
-						zoomControls.setVisibility(View.VISIBLE);
-					}
-				}
-				else {
-					zoomControls.setVisibility(View.INVISIBLE); // must be INVISIBLE not GONE, so we can still position the zoomSeekBar relative to it
-				}
-				
-				zoomSeekBar.setOnSeekBarChangeListener(null); // clear an existing listener - don't want to call the listener when setting up the progress bar to match the existing state
-				zoomSeekBar.setMax(preview.getMaxZoom());
-				zoomSeekBar.setProgress(preview.getMaxZoom()-preview.getCameraController().getZoom());
-				zoomSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-					@Override
-					public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-						if( MyDebug.LOG )
-							Log.d(TAG, "zoom onProgressChanged: " + progress);
-						preview.zoomTo(preview.getMaxZoom()-progress);
-					}
-
-					@Override
-					public void onStartTrackingTouch(SeekBar seekBar) {
-					}
-
-					@Override
-					public void onStopTrackingTouch(SeekBar seekBar) {
-					}
-				});
-
-				if( sharedPreferences.getBoolean(PreferenceKeys.getShowZoomSliderControlsPreferenceKey(), true) ) {
-					if( !applicationInterface.inImmersiveMode() ) {
-						zoomSeekBar.setVisibility(View.VISIBLE);
-					}
-				}
-				else {
-					zoomSeekBar.setVisibility(View.INVISIBLE);
-				}
-			}
-			else {
-				zoomControls.setVisibility(View.GONE);
-				zoomSeekBar.setVisibility(View.GONE);
-			}
-		}*/
 		{
 			if( MyDebug.LOG )
 				Log.d(TAG, "set up manual focus");
@@ -2272,19 +2145,11 @@ public class MainActivity extends Activity {
     	return this.supports_auto_stabilise;
     }
 
-/*    public boolean supportsForceVideo4K() {
-    	return this.supports_force_video_4k;
-    }*/
-
     public boolean supportsCamera2() {
     	return this.supports_camera2;
     }
-    
-    /*void disableForceVideo4K() {
-    	this.supports_force_video_4k = false;
-    }*/
 
-    @SuppressWarnings("deprecation")
+    /*@SuppressWarnings("deprecation")
 	public long freeMemory() { // return free memory in MB
     	try {
     		File folder = applicationInterface.getStorageUtils().getImageFolder();
@@ -2296,9 +2161,9 @@ public class MainActivity extends Activity {
 	        long blocks = statFs.getAvailableBlocks();
 	        long size = statFs.getBlockSize();
 	        long free  = (blocks*size) / 1048576;
-			/*if( MyDebug.LOG ) {
+			*//*if( MyDebug.LOG ) {
 				Log.d(TAG, "freeMemory blocks: " + blocks + " size: " + size + " free: " + free);
-			}*/
+			}*//*
 	        return free;
     	}
     	catch(IllegalArgumentException e) {
@@ -2313,9 +2178,9 @@ public class MainActivity extends Activity {
         	        long blocks = statFs.getAvailableBlocks();
         	        long size = statFs.getBlockSize();
         	        long free  = (blocks*size) / 1048576;
-        			/*if( MyDebug.LOG ) {
+        			*//*if( MyDebug.LOG ) {
         				Log.d(TAG, "freeMemory blocks: " + blocks + " size: " + size + " free: " + free);
-        			}*/
+        			}*//*
         	        return free;
         		}
         	}
@@ -2324,7 +2189,7 @@ public class MainActivity extends Activity {
         	}
     	}
 		return -1;
-    }
+    }*/
     
     public static String getDonateLink() {
     	return "https://play.google.com/store/apps/details?id=harman.mark.donation";
@@ -2360,51 +2225,21 @@ public class MainActivity extends Activity {
 		CameraController camera_controller = preview.getCameraController();
 		if( camera_controller == null || this.camera_in_background )
 			return;
-		String toast_string = "";
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		/*if( preview.isVideo() ) {
-			CamcorderProfile profile = preview.getCamcorderProfile();
-			String bitrate_string = "";
-			if( profile.videoBitRate >= 10000000 )
-				bitrate_string = profile.videoBitRate/1000000 + "Mbps";
-			else if( profile.videoBitRate >= 10000 )
-				bitrate_string = profile.videoBitRate/1000 + "Kbps";
-			else
-				bitrate_string = profile.videoBitRate + "bps";
 
-			String timer_value = sharedPreferences.getString(PreferenceKeys.getVideoMaxDurationPreferenceKey(), "0");
-			toast_string = getResources().getString(R.string.video) + ": " + profile.videoFrameWidth + "x" + profile.videoFrameHeight + ", " + profile.videoFrameRate + "fps, " + bitrate_string;
-			boolean record_audio = sharedPreferences.getBoolean(PreferenceKeys.getRecordAudioPreferenceKey(), true);
-			if( !record_audio ) {
-				toast_string += "\n" + getResources().getString(R.string.audio_disabled);
-			}
-			if( timer_value.length() > 0 && !timer_value.equals("0") ) {
-				String [] entries_array = getResources().getStringArray(R.array.preference_video_max_duration_entries);
-				String [] values_array = getResources().getStringArray(R.array.preference_video_max_duration_values);
-				int index = Arrays.asList(values_array).indexOf(timer_value);
-				if( index != -1 ) { // just in case!
-					String entry = entries_array[index];
-					toast_string += "\n" + getResources().getString(R.string.max_duration) +": " + entry;
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+		String toast_string = getResources().getString(R.string.photo);
+		CameraController.Size current_size = preview.getCurrentPictureSize();
+		toast_string += " " + current_size.width + "x" + current_size.height;
+		if( preview.supportsFocus() && preview.getSupportedFocusValues().size() > 1 ) {
+			String focus_value = preview.getCurrentFocusValue();
+			if( focus_value != null && !focus_value.equals("focus_mode_auto") ) {
+				String focus_entry = preview.findFocusEntryForValue(focus_value);
+				if( focus_entry != null ) {
+					toast_string += "\n" + focus_entry;
 				}
-			}
-			if( sharedPreferences.getBoolean(PreferenceKeys.getVideoFlashPreferenceKey(), false) && preview.supportsFlash() ) {
-				toast_string += "\n" + getResources().getString(R.string.preference_video_flash);
 			}
 		}
-		else {*/
-			toast_string = getResources().getString(R.string.photo);
-			CameraController.Size current_size = preview.getCurrentPictureSize();
-			toast_string += " " + current_size.width + "x" + current_size.height;
-			if( preview.supportsFocus() && preview.getSupportedFocusValues().size() > 1 ) {
-				String focus_value = preview.getCurrentFocusValue();
-				if( focus_value != null && !focus_value.equals("focus_mode_auto") ) {
-					String focus_entry = preview.findFocusEntryForValue(focus_value);
-					if( focus_entry != null ) {
-						toast_string += "\n" + focus_entry;
-					}
-				}
-			}
-		/*}*/
 		String iso_value = sharedPreferences.getString(PreferenceKeys.getISOPreferenceKey(), camera_controller.getDefaultISO());
 		if( !iso_value.equals(camera_controller.getDefaultISO()) ) {
 			toast_string += "\nISO: " + iso_value;

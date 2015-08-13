@@ -104,9 +104,9 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 
 	private int current_orientation = 0; // orientation received by onOrientationChanged
 	private int current_rotation = 0; // orientation relative to camera's orientation (used for parameters.setRotation())
-	private boolean has_level_angle = false;
+	/*private boolean has_level_angle = false;
 	private double level_angle = 0.0f;
-	private double orig_level_angle = 0.0f;
+	private double orig_level_angle = 0.0f;*/
 
 	private GestureDetector gestureDetector = null;
 	private float minimum_focus_distance = 0.0f;
@@ -2657,9 +2657,9 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		}
     }
 
-    public void onAccelerometerSensorChanged(SensorEvent event) {
-		/*if( MyDebug.LOG )
-    	Log.d(TAG, "onAccelerometerSensorChanged: " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);*/
+    /*public void onAccelerometerSensorChanged(SensorEvent event) {
+		*//*if( MyDebug.LOG )
+    	Log.d(TAG, "onAccelerometerSensorChanged: " + event.values[0] + ", " + event.values[1] + ", " + event.values[2]);*//*
 
     	this.has_gravity = true;
     	for(int i=0;i<3;i++) {
@@ -2685,9 +2685,9 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		}
 
 		cameraSurface.getView().invalidate();
-	}
+	}*/
     
-    public boolean hasLevelAngle() {
+    /*public boolean hasLevelAngle() {
     	return this.has_level_angle;
     }
     
@@ -2697,7 +2697,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
     
     public double getOrigLevelAngle() {
     	return this.orig_level_angle;
-    }
+    }*/
 
     public void onMagneticSensorChanged(SensorEvent event) {
     	this.has_geomagnetic = true;
