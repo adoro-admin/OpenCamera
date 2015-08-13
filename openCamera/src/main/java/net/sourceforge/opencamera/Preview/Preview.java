@@ -86,13 +86,6 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	private double aspect_ratio = 0.0f;
 	private CameraControllerManager camera_controller_manager = null;
 	private CameraController camera_controller = null;
-	/*private boolean is_video = false;
-	private MediaRecorder video_recorder = null;
-	private boolean video_start_time_set = false;
-	private long video_start_time = 0;
-	private int video_method = ApplicationInterface.VIDEOMETHOD_FILE;*/
-	/*private Uri video_uri = null; // for VIDEOMETHOD_SAF or VIDEOMETHOD_URI
-	private String video_filename = null; // for VIDEOMETHOD_FILE*/
 
 	private final int PHASE_NORMAL = 0;
 	private final int PHASE_TIMER = 1;
@@ -103,13 +96,9 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	private TimerTask takePictureTimerTask = null;
 	private Timer beepTimer = new Timer();
 	private TimerTask beepTimerTask = null;
-	/*private Timer restartVideoTimer = new Timer();
-	private TimerTask restartVideoTimerTask = null;
-	private Timer flashVideoTimer = new Timer();
-	private TimerTask flashVideoTimerTask = null;*/
+
 	private long take_photo_time = 0;
 	private int remaining_burst_photos = 0;
-	private int remaining_restart_video = 0;
 
 	private boolean is_preview_started = false;
 
@@ -118,12 +107,8 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	private boolean has_level_angle = false;
 	private double level_angle = 0.0f;
 	private double orig_level_angle = 0.0f;
-	
-	/*private boolean has_zoom = false;
-	private int max_zoom_factor = 0;*/
+
 	private GestureDetector gestureDetector = null;
-	private ScaleGestureDetector scaleGestureDetector = null;
-	/*private List<Integer> zoom_ratios = null;*/
 	private float minimum_focus_distance = 0.0f;
 	private boolean touch_was_multitouch = false;
 	private float touch_orig_x = 0.0f;
@@ -243,7 +228,6 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 
 	    gestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener());
 	    gestureDetector.setOnDoubleTapListener(new DoubleTapListener());
-	    /*scaleGestureDetector = new ScaleGestureDetector(getContext(), new ScaleListener());*/
 
 		parent.addView(cameraSurface.getView());
 		if( canvasView != null ) {
@@ -361,7 +345,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
     			Log.d(TAG, "touch event handled by gestureDetector");
         	return true;
         }
-        scaleGestureDetector.onTouchEvent(event);
+
         if( camera_controller == null ) {
     		if( MyDebug.LOG )
     			Log.d(TAG, "try to reopen camera due to touch");
@@ -454,18 +438,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		tryAutoFocus(false, true);
 		return true;
 	}
-	
-	//@SuppressLint("ClickableViewAccessibility") @Override
 
-	/*private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-    	@Override
-    	public boolean onScale(ScaleGestureDetector detector) {
-    		if( Preview.this.camera_controller != null && Preview.this.has_zoom ) {
-    			Preview.this.scaleZoom(detector.getScaleFactor());
-    		}
-    		return true;
-    	}
-    }*/
     
 	private class DoubleTapListener extends GestureDetector.SimpleOnGestureListener {
 		@Override
@@ -734,10 +707,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		successfully_focused = false;
 		preview_targetRatio = 0.0;
 		scene_modes = null;
-		/*has_zoom = false;
-		max_zoom_factor = 0;*/
 		minimum_focus_distance = 0.0f;
-		/*zoom_ratios = null;*/
 		faces_detected = null;
 		supports_face_detection = false;
 		using_face_detection = false;
@@ -906,11 +876,6 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 			//Log.d(TAG, "time after starting camera preview: " + (System.currentTimeMillis() - debug_time));
 		}
 
-		// must be done after setting parameters, as this function may set parameters
-		// also needs to be done after starting preview for some devices (e.g., Nexus 7)
-		/*if( this.has_zoom && applicationInterface.getZoomPref() != 0 ) {
-			zoomTo(applicationInterface.getZoomPref());
-		}*/
 		
 	    if( take_photo ) {
 			// take photo after a delay - otherwise we sometimes get a black image?!
@@ -977,11 +942,6 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 			if( MyDebug.LOG )
 				Log.d(TAG, "grab info from parameters");
 			CameraController.CameraFeatures camera_features = camera_controller.getCameraFeatures();
-		/*	this.has_zoom = camera_features.is_zoom_supported;
-			if( this.has_zoom ) {
-				this.max_zoom_factor = camera_features.max_zoom;
-				this.zoom_ratios = camera_features.zoom_ratios;
-			}*/
 			this.minimum_focus_distance = camera_features.minimum_focus_distance;
 			this.supports_face_detection = camera_features.supports_face_detection;
 			this.sizes = camera_features.picture_sizes;
@@ -1665,73 +1625,8 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		applicationInterface.onDrawPreview(canvas);
 	}
 
-	/*public void scaleZoom(float scale_factor) {
-		if( MyDebug.LOG )
-			Log.d(TAG, "scaleZoom() " + scale_factor);
-		if( this.camera_controller != null && this.has_zoom ) {
-			int zoom_factor = camera_controller.getZoom();
-			float zoom_ratio = this.zoom_ratios.get(zoom_factor)/100.0f;
-			zoom_ratio *= scale_factor;
 
-			int new_zoom_factor = zoom_factor;
-			if( zoom_ratio <= 1.0f ) {
-				new_zoom_factor = 0;
-			}
-			else if( zoom_ratio >= zoom_ratios.get(max_zoom_factor)/100.0f ) {
-				new_zoom_factor = max_zoom_factor;
-			}
-			else {
-				// find the closest zoom level
-				if( scale_factor > 1.0f ) {
-					// zooming in
-    				for(int i=zoom_factor;i<zoom_ratios.size();i++) {
-    					if( zoom_ratios.get(i)/100.0f >= zoom_ratio ) {
-    						if( MyDebug.LOG )
-    							Log.d(TAG, "zoom int, found new zoom by comparing " + zoom_ratios.get(i)/100.0f + " >= " + zoom_ratio);
-    						new_zoom_factor = i;
-    						break;
-    					}
-    				}
-				}
-				else {
-					// zooming out
-    				for(int i=zoom_factor;i>=0;i--) {
-    					if( zoom_ratios.get(i)/100.0f <= zoom_ratio ) {
-    						if( MyDebug.LOG )
-    							Log.d(TAG, "zoom out, found new zoom by comparing " + zoom_ratios.get(i)/100.0f + " <= " + zoom_ratio);
-    						new_zoom_factor = i;
-    						break;
-    					}
-    				}
-				}
-			}
-			if( MyDebug.LOG ) {
-				Log.d(TAG, "ScaleListener.onScale zoom_ratio is now " + zoom_ratio);
-				Log.d(TAG, "    old zoom_factor " + zoom_factor + " ratio " + zoom_ratios.get(zoom_factor)/100.0f);
-				Log.d(TAG, "    chosen new zoom_factor " + new_zoom_factor + " ratio " + zoom_ratios.get(new_zoom_factor)/100.0f);
-			}
-			zoomTo(new_zoom_factor);
-			applicationInterface.multitouchZoom(new_zoom_factor);
-		}
-	}*/
-	
-	/*public void zoomTo(int new_zoom_factor) {
-		if( MyDebug.LOG )
-			Log.d(TAG, "ZoomTo(): " + new_zoom_factor);
-		if( new_zoom_factor < 0 )
-			new_zoom_factor = 0;
-		else if( new_zoom_factor > max_zoom_factor )
-			new_zoom_factor = max_zoom_factor;
-		// problem where we crashed due to calling this function with null camera should be fixed now, but check again just to be safe
-    	if( camera_controller != null ) {
-			if( this.has_zoom ) {
-				camera_controller.setZoom(new_zoom_factor);
-				applicationInterface.setZoomPref(new_zoom_factor);
-	    		clearFocusAreas();
-			}
-        }
-	}*/
-	
+
 	public void setFocusDistance(float new_focus_distance) {
 		if( MyDebug.LOG )
 			Log.d(TAG, "setFocusDistance: " + new_focus_distance);
@@ -2990,10 +2885,6 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	public List<String> getSupportedFocusValues() {
 		return supported_focus_values;
 	}
-	
-	/*public List<Integer> getSupportedZoomRatios() {
-		return zoom_ratios;
-	}*/
 
     public int getCameraId() {
         if( camera_controller == null )
@@ -3209,14 +3100,6 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
     	return this.is_exposure_locked;
     }
     
-    /*public boolean supportsZoom() {
-    	return this.has_zoom;
-    }
-    
-    public int getMaxZoom() {
-    	return this.max_zoom_factor;
-    }*/
-    
     public boolean hasFocusArea() {
     	return this.has_focus_area;
     }
@@ -3266,10 +3149,4 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
     public CameraController.Face [] getFacesDetected() {
     	return this.faces_detected;
     }
-    
-	/*public float getZoomRatio() {
-		int zoom_factor = camera_controller.getZoom();
-		float zoom_ratio = this.zoom_ratios.get(zoom_factor)/100.0f;
-		return zoom_ratio;
-	}*/
 }

@@ -164,11 +164,6 @@ public class CameraController1 extends CameraController {
 				if( MyDebug.LOG )
 					Log.d(TAG, " supports focus_mode_edof");
 			}
-			if( supported_focus_modes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ) {
-				output_modes.add("focus_mode_continuous_video");
-				if( MyDebug.LOG )
-					Log.d(TAG, " supports focus_mode_continuous_video");
-			}
 		}
 		return output_modes;
 	}
@@ -188,23 +183,6 @@ public class CameraController1 extends CameraController {
 			Log.d(TAG, "getCameraFeatures()");
 	    Camera.Parameters parameters = this.getParameters();
 	    CameraFeatures camera_features = new CameraFeatures();
-		/*camera_features.is_zoom_supported = parameters.isZoomSupported();
-		if( camera_features.is_zoom_supported ) {
-			camera_features.max_zoom = parameters.getMaxZoom();
-			try {
-				camera_features.zoom_ratios = parameters.getZoomRatios();
-			}
-			catch(NumberFormatException e) {
-        		// crash java.lang.NumberFormatException: Invalid int: " 500" reported in v1.4 on device "es209ra", Android 4.1, 3 Jan 2014
-				// this is from java.lang.Integer.invalidInt(Integer.java:138) - unclear if this is a bug in Open Camera, all we can do for now is catch it
-	    		if( MyDebug.LOG )
-	    			Log.e(TAG, "NumberFormatException in getZoomRatios()");
-				e.printStackTrace();
-				camera_features.is_zoom_supported = false;
-				camera_features.max_zoom = 0;
-				camera_features.zoom_ratios = null;
-			}
-		}*/
 
 		camera_features.supports_face_detection = parameters.getMaxNumDetectedFaces() > 0;
 
@@ -226,8 +204,6 @@ public class CameraController1 extends CameraController {
 
         camera_features.is_exposure_lock_supported = parameters.isAutoExposureLockSupported();
 
-        /*camera_features.is_video_stabilization_supported = parameters.isVideoStabilizationSupported();*/
-        
         camera_features.min_exposure = parameters.getMinExposureCompensation();
         camera_features.max_exposure = parameters.getMaxExposureCompensation();
         try {
@@ -240,19 +216,6 @@ public class CameraController1 extends CameraController {
         	e.printStackTrace();
         	camera_features.exposure_step = 1.0f/3.0f; // make up a typical example
         }
-
-		/*List<Camera.Size> camera_video_sizes = parameters.getSupportedVideoSizes();
-    	if( camera_video_sizes == null ) {
-    		// if null, we should use the preview sizes - see http://stackoverflow.com/questions/14263521/android-getsupportedvideosizes-allways-returns-null
-    		if( MyDebug.LOG )
-    			Log.d(TAG, "take video_sizes from preview sizes");
-    		camera_video_sizes = parameters.getSupportedPreviewSizes();
-    	}
-		camera_features.video_sizes = new ArrayList<CameraController.Size>();
-		//camera_features.video_sizes.add(new CameraController.Size(1920, 1080)); // test
-		for(Camera.Size camera_size : camera_video_sizes) {
-			camera_features.video_sizes.add(new CameraController.Size(camera_size.width, camera_size.height));
-		}*/
 
 		List<Camera.Size> camera_preview_sizes = parameters.getSupportedPreviewSizes();
 		camera_features.preview_sizes = new ArrayList<CameraController.Size>();
@@ -495,17 +458,6 @@ public class CameraController1 extends CameraController {
 			Log.d(TAG, "new preview size: " + parameters.getPreviewSize().width + ", " + parameters.getPreviewSize().height);
     	setCameraParameters(parameters);
     }
-	
-	public void setVideoStabilization(boolean enabled) {
-	    Camera.Parameters parameters = this.getParameters();
-        parameters.setVideoStabilization(enabled);
-    	setCameraParameters(parameters);
-	}
-	
-	public boolean getVideoStabilization() {
-	    Camera.Parameters parameters = this.getParameters();
-        return parameters.getVideoStabilization();
-	}
 
 	public int getJpegQuality() {
 	    Camera.Parameters parameters = this.getParameters();
@@ -517,19 +469,6 @@ public class CameraController1 extends CameraController {
 		parameters.setJpegQuality(quality);
     	setCameraParameters(parameters);
 	}
-	
-	/*public int getZoom() {
-		Camera.Parameters parameters = this.getParameters();
-		return parameters.getZoom();
-	}
-	
-	public void setZoom(int value) {
-		Camera.Parameters parameters = this.getParameters();
-		if( MyDebug.LOG )
-			Log.d(TAG, "zoom was: " + parameters.getZoom());
-		parameters.setZoom(value);
-    	setCameraParameters(parameters);
-	}*/
 
 	public int getExposureCompensation() {
 		Camera.Parameters parameters = this.getParameters();
@@ -595,9 +534,6 @@ public class CameraController1 extends CameraController {
     	else if( focus_value.equals("focus_mode_edof") ) {
     		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_EDOF);
     	}
-    	else if( focus_value.equals("focus_mode_continuous_video") ) {
-    		parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-    	}
     	else {
     		if( MyDebug.LOG )
     			Log.d(TAG, "setFocusValue() received unknown focus value " + focus_value);
@@ -627,9 +563,6 @@ public class CameraController1 extends CameraController {
     	}
 		else if( focus_mode.equals(Camera.Parameters.FOCUS_MODE_EDOF) ) {
     		focus_value = "focus_mode_edof";
-    	}
-		else if( focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ) {
-    		focus_value = "focus_mode_continuous_video";
     	}
     	return focus_value;
 	}
@@ -758,7 +691,7 @@ public class CameraController1 extends CameraController {
 		// but I've still kept this check here - if nothing else, because it apparently caused video recording problems on other devices too.
 		String focus_mode = parameters.getFocusMode();
 		// getFocusMode() is documented as never returning null, however I've had null pointer exceptions reported in Google Play
-        if( focus_mode != null && !focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ) {
+        if( focus_mode != null ) {
 			parameters.setRecordingHint(hint);
         	setCameraParameters(parameters);
         }
@@ -825,7 +758,7 @@ public class CameraController1 extends CameraController {
         Camera.Parameters parameters = this.getParameters();
 		String focus_mode = parameters.getFocusMode();
 		// getFocusMode() is documented as never returning null, however I've had null pointer exceptions reported in Google Play
-        if( parameters.getMaxNumFocusAreas() != 0 && focus_mode != null && ( focus_mode.equals(Camera.Parameters.FOCUS_MODE_AUTO) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_MACRO) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO) ) ) {
+        if( parameters.getMaxNumFocusAreas() != 0 && focus_mode != null && ( focus_mode.equals(Camera.Parameters.FOCUS_MODE_AUTO) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_MACRO) || focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE) ) ) {
 		    parameters.setFocusAreas(camera_areas);
 
 		    // also set metering areas
@@ -903,18 +836,6 @@ public class CameraController1 extends CameraController {
         	return true;
         }
         return false;
-	}
-	
-	public boolean focusIsVideo() {
-		Camera.Parameters parameters = this.getParameters();
-		String current_focus_mode = parameters.getFocusMode();
-		// getFocusMode() is documented as never returning null, however I've had null pointer exceptions reported in Google Play
-		boolean focus_is_video = current_focus_mode != null && current_focus_mode.equals(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
-		if( MyDebug.LOG ) {
-			Log.d(TAG, "current_focus_mode: " + current_focus_mode);
-			Log.d(TAG, "focus_is_video: " + focus_is_video);
-		}
-		return focus_is_video;
 	}
 	
 	@Override

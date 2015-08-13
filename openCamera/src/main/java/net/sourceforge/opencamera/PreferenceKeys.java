@@ -25,14 +25,6 @@ public class PreferenceKeys {
     	return "camera_resolution_" + cameraId;
     }
     
-    public static String getVideoQualityPreferenceKey(int cameraId) {
-    	return "video_quality_" + cameraId;
-    }
-    
-    public static String getIsVideoPreferenceKey() {
-    	return "is_video";
-    }
-    
     public static String getExposurePreferenceKey() {
     	return "preference_exposure";
     }
@@ -161,22 +153,6 @@ public class PreferenceKeys {
     	return "preference_save_photo_prefix";
     }
 
-    public static String getSaveVideoPrefixPreferenceKey() {
-    	return "preference_save_video_prefix";
-    }
-
-    public static String getShowZoomControlsPreferenceKey() {
-    	return "preference_show_zoom_controls";
-    }
-
-    public static String getShowZoomSliderControlsPreferenceKey() {
-    	return "preference_show_zoom_slider_controls";
-    }
-    
-    public static String getShowZoomPreferenceKey() {
-    	return "preference_show_zoom";
-    }
-    
     public static String getShowISOPreferenceKey() {
     	return "preference_show_iso";
     }
@@ -219,50 +195,6 @@ public class PreferenceKeys {
     
     public static String getFaceDetectionPreferenceKey() {
     	return "preference_face_detection";
-    }
-
-    public static String getVideoStabilizationPreferenceKey() {
-    	return "preference_video_stabilization";
-    }
-    
-    public static String getForceVideo4KPreferenceKey() {
-    	return "preference_force_video_4k";
-    }
-    
-    public static String getVideoBitratePreferenceKey() {
-    	return "preference_video_bitrate";
-    }
-
-    public static String getVideoFPSPreferenceKey() {
-    	return "preference_video_fps";
-    }
-    
-    public static String getVideoMaxDurationPreferenceKey() {
-    	return "preference_video_max_duration";
-    }
-    
-    public static String getVideoRestartPreferenceKey() {
-    	return "preference_video_restart";
-    }
-    
-    public static String getVideoFlashPreferenceKey() {
-    	return "preference_video_flash";
-    }
-
-    public static String getLockVideoPreferenceKey() {
-    	return "preference_lock_video";
-    }
-    
-    public static String getRecordAudioPreferenceKey() {
-    	return "preference_record_audio";
-    }
-
-    public static String getRecordAudioChannelsPreferenceKey() {
-    	return "preference_record_audio_channels";
-    }
-
-    public static String getRecordAudioSourcePreferenceKey() {
-    	return "preference_record_audio_src";
     }
 
     public static String getPreviewSizePreferenceKey() {

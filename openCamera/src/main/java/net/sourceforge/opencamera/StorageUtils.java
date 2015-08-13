@@ -366,10 +366,6 @@ public class StorageUtils {
     		String prefix = sharedPreferences.getString(PreferenceKeys.getSavePhotoPrefixPreferenceKey(), "IMG_");
     		mediaFilename = prefix + timeStamp + index + ".jpg";
         }
-        else if( type == MEDIA_TYPE_VIDEO ) {
-    		String prefix = sharedPreferences.getString(PreferenceKeys.getSaveVideoPrefixPreferenceKey(), "VID_");
-    		mediaFilename = prefix + timeStamp + index + ".mp4";
-        }
         else {
         	// throw exception as this is a programming error
     		if( MyDebug.LOG )

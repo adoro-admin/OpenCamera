@@ -19,9 +19,6 @@ public abstract class CameraController {
 	public int count_camera_parameters_exception = 0;
 
 	public static class CameraFeatures {
-		/*public boolean is_zoom_supported = false;
-		public int max_zoom = 0;
-		public List<Integer> zoom_ratios = null;*/
 		public boolean supports_face_detection = false;
 		public List<CameraController.Size> picture_sizes = null;
 		public List<CameraController.Size> preview_sizes = null;
@@ -129,8 +126,6 @@ public abstract class CameraController {
     public abstract void setPreviewSize(int width, int height);
 	public abstract int getJpegQuality();
 	public abstract void setJpegQuality(int quality);
-	/*public abstract int getZoom();
-	public abstract void setZoom(int value);*/
 	public abstract int getExposureCompensation();
 	public abstract boolean setExposureCompensation(int new_exposure);
 	public abstract void setPreviewFpsRange(int min, int max);

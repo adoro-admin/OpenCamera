@@ -80,8 +80,6 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
 		final int preview_height = bundle.getInt("preview_height");
 		final int [] preview_widths = bundle.getIntArray("preview_widths");
 		final int [] preview_heights = bundle.getIntArray("preview_heights");
-		final int [] video_widths = bundle.getIntArray("video_widths");
-		final int [] video_heights = bundle.getIntArray("video_heights");
 
 		final int resolution_width = bundle.getInt("resolution_width");
 		final int resolution_height = bundle.getInt("resolution_height");
@@ -122,55 +120,6 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
 			ListPreference lp = (ListPreference)findPreference("preference_quality");
 			lp.setEntries(entries);
 			lp.setEntryValues(values);
-		}
-
-		final String [] video_quality = bundle.getStringArray("video_quality");
-		final String [] video_quality_string = bundle.getStringArray("video_quality_string");
-		if( video_quality != null && video_quality_string != null ) {
-			CharSequence [] entries = new CharSequence[video_quality.length];
-			CharSequence [] values = new CharSequence[video_quality.length];
-			for(int i=0;i<video_quality.length;i++) {
-				entries[i] = video_quality_string[i];
-				values[i] = video_quality[i];
-			}
-			ListPreference lp = (ListPreference)findPreference("preference_video_quality");
-			lp.setEntries(entries);
-			lp.setEntryValues(values);
-			String video_quality_preference_key = PreferenceKeys.getVideoQualityPreferenceKey(cameraId);
-			String video_quality_value = sharedPreferences.getString(video_quality_preference_key, "");
-			if( MyDebug.LOG )
-				Log.d(TAG, "video_quality_value: " + video_quality_value);
-			lp.setValue(video_quality_value);
-			// now set the key, so we save for the correct cameraId
-			lp.setKey(video_quality_preference_key);
-		}
-		else {
-			Preference pref = findPreference("preference_video_quality");
-			PreferenceGroup pg = (PreferenceGroup)this.findPreference("preference_screen_video_settings");
-        	pg.removePreference(pref);
-		}
-		final String current_video_quality = bundle.getString("current_video_quality");
-		final int video_frame_width = bundle.getInt("video_frame_width");
-		final int video_frame_height = bundle.getInt("video_frame_height");
-		final int video_bit_rate = bundle.getInt("video_bit_rate");
-		final int video_frame_rate = bundle.getInt("video_frame_rate");
-
-		final boolean supports_force_video_4k = bundle.getBoolean("supports_force_video_4k");
-		if( MyDebug.LOG )
-			Log.d(TAG, "supports_force_video_4k: " + supports_force_video_4k);
-		if( !supports_force_video_4k || video_quality == null || video_quality_string == null ) {
-			Preference pref = findPreference("preference_force_video_4k");
-			PreferenceGroup pg = (PreferenceGroup)this.findPreference("preference_screen_video_settings");
-        	pg.removePreference(pref);
-		}
-		
-		final boolean supports_video_stabilization = bundle.getBoolean("supports_video_stabilization");
-		if( MyDebug.LOG )
-			Log.d(TAG, "supports_video_stabilization: " + supports_video_stabilization);
-		if( !supports_video_stabilization ) {
-			Preference pref = findPreference("preference_video_stabilization");
-			PreferenceGroup pg = (PreferenceGroup)this.findPreference("preference_screen_video_settings");
-        	pg.removePreference(pref);
 		}
 
 		final boolean can_disable_shutter_sound = bundle.getBoolean("can_disable_shutter_sound");
@@ -402,13 +351,6 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
                         about_string.append(cameraId);
                         about_string.append("\nCamera API: ");
                         about_string.append(camera_api);
-                        {
-                        	String last_video_error = sharedPreferences.getString("last_video_error", "");
-                        	if( last_video_error != null && last_video_error.length() > 0 ) {
-                                about_string.append("\nLast video error: ");
-                                about_string.append(last_video_error);
-                        	}
-                        }
                         if( preview_widths != null && preview_heights != null ) {
                             about_string.append("\nPreview resolutions: ");
                 			for(int i=0;i<preview_widths.length;i++) {
@@ -433,38 +375,11 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
                 			}
                         }
                         about_string.append("\nPhoto resolution: " + resolution_width + "x" + resolution_height);
-                        if( video_quality != null ) {
-                            about_string.append("\nVideo qualities: ");
-                			for(int i=0;i<video_quality.length;i++) {
-                				if( i > 0 ) {
-                    				about_string.append(", ");
-                				}
-                				about_string.append(video_quality[i]);
-                			}
-                        }
-                        if( video_widths != null && video_heights != null ) {
-                            about_string.append("\nVideo resolutions: ");
-                			for(int i=0;i<video_widths.length;i++) {
-                				if( i > 0 ) {
-                    				about_string.append(", ");
-                				}
-                				about_string.append(video_widths[i]);
-                				about_string.append("x");
-                				about_string.append(video_heights[i]);
-                			}
-                        }
-        				about_string.append("\nVideo quality: " + current_video_quality);
-        				about_string.append("\nVideo frame width: " + video_frame_width);
-        				about_string.append("\nVideo frame height: " + video_frame_height);
-        				about_string.append("\nVideo bit rate: " + video_bit_rate);
-        				about_string.append("\nVideo frame rate: " + video_frame_rate);
                         about_string.append("\nAuto-stabilise?: ");
                         about_string.append(getString(supports_auto_stabilise ? R.string.about_available : R.string.about_not_available));
                         about_string.append("\nAuto-stabilise enabled?: " + sharedPreferences.getBoolean(PreferenceKeys.getAutoStabilisePreferenceKey(), false));
                         about_string.append("\nFace detection?: ");
                         about_string.append(getString(supports_face_detection ? R.string.about_available : R.string.about_not_available));
-                        about_string.append("\nVideo stabilization?: ");
-                        about_string.append(getString(supports_video_stabilization ? R.string.about_available : R.string.about_not_available));
                         about_string.append("\nFlash modes: ");
                 		String [] flash_values = bundle.getStringArray("flash_values");
                 		if( flash_values != null && flash_values.length > 0 ) {

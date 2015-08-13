@@ -1,13 +1,8 @@
 package net.sourceforge.opencamera.Preview;
 
-import java.io.File;
-import java.io.IOException;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.location.Location;
-import android.media.CamcorderProfile;
-import android.net.Uri;
 import android.util.Pair;
 import android.view.MotionEvent;
 
@@ -48,7 +43,6 @@ public interface ApplicationInterface {
 	boolean getGeotaggingPref(); // whether to geotag photos
 	boolean getRequireLocationPref(); // if getGeotaggingPref() returns true, and this method returns true, then phot/video will only be taken if location data is available
 
-	/*int getZoomPref(); // index into Preview.getSupportedZoomRatios() array (each entry is the zoom factor, scaled by 100; array is sorted from min to max zoom)*/
 	// Camera2 only modes:
 	long getExposureTimePref(); // only called if getISOPref() is not "default"
 	float getFocusDistancePref();
@@ -90,7 +84,6 @@ public interface ApplicationInterface {
 	void clearExposureCompensationPref();
 	void setCameraResolutionPref(int width, int height);
 
-	/*void setZoomPref(int zoom);*/
 	// Camera2 only modes:
 	void setExposureTimePref(long exposure_time);
 	void clearExposureTimePref();

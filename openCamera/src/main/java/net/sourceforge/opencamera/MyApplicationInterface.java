@@ -98,7 +98,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 	
 	// camera properties which are saved in bundle, but not stored in preferences (so will be remembered if the app goes into background, but not after restart)
 	private int cameraId = 0;
-	private int zoom_factor = 0;
 	private float focus_distance = 0.0f;
 
 	MyApplicationInterface(MainActivity main_activity, Bundle savedInstanceState) {
@@ -112,9 +111,6 @@ public class MyApplicationInterface implements ApplicationInterface {
     		cameraId = savedInstanceState.getInt("cameraId", 0);
 			if( MyDebug.LOG )
 				Log.d(TAG, "found cameraId: " + cameraId);
-    		zoom_factor = savedInstanceState.getInt("zoom_factor", 0);
-			if( MyDebug.LOG )
-				Log.d(TAG, "found zoom_factor: " + zoom_factor);
 			focus_distance = savedInstanceState.getFloat("focus_distance", 0.0f);
 			if( MyDebug.LOG )
 				Log.d(TAG, "found focus_distance: " + focus_distance);
@@ -130,9 +126,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 		if( MyDebug.LOG )
 			Log.d(TAG, "save cameraId: " + cameraId);
     	state.putInt("cameraId", cameraId);
-		if( MyDebug.LOG )
-			Log.d(TAG, "save zoom_factor: " + zoom_factor);
-    	state.putInt("zoom_factor", zoom_factor);
 		if( MyDebug.LOG )
 			Log.d(TAG, "save focus_distance: " + focus_distance);
     	state.putFloat("focus_distance", focus_distance);
@@ -450,13 +443,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 		}
 		return font_size;
     }
-    
-    /*@Override
-    public int getZoomPref() {
-		if( MyDebug.LOG )
-			Log.d(TAG, "getZoomPref: " + zoom_factor);
-    	return zoom_factor;
-    }*/
 
     @Override
     public long getExposureTimePref() {
@@ -522,8 +508,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 				View popupButton = (View) main_activity.findViewById(R.id.popup);
 				View galleryButton = (View) main_activity.findViewById(R.id.gallery);
 				View settingsButton = (View) main_activity.findViewById(R.id.settings);
-			    /*View zoomControls = (View) main_activity.findViewById(R.id.zoom);
-			    View zoomSeekBar = (View) main_activity.findViewById(R.id.zoom_seekbar);*/
 				if (main_activity.getPreview().getCameraControllerManager().getNumberOfCameras() > 1)
 					switchCameraButton.setVisibility(visibility);
 				if (main_activity.supportsExposureButton())
@@ -533,15 +517,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 				popupButton.setVisibility(visibility);
 				galleryButton.setVisibility(visibility);
 				settingsButton.setVisibility(visibility);
-				/*if( MyDebug.LOG ) {
-					Log.d(TAG, "has_zoom: " + main_activity.getPreview().supportsZoom());
-				}
-				if( main_activity.getPreview().supportsZoom() && sharedPreferences.getBoolean(PreferenceKeys.getShowZoomControlsPreferenceKey(), false) ) {
-					zoomControls.setVisibility(visibility);
-				}
-				if( main_activity.getPreview().supportsZoom() && sharedPreferences.getBoolean(PreferenceKeys.getShowZoomSliderControlsPreferenceKey(), true) ) {
-					zoomSeekBar.setVisibility(visibility);
-				}*/
 				String pref_immersive_mode = sharedPreferences.getString(PreferenceKeys.getImmersiveModePreferenceKey(), "immersive_mode_low_profile");
 				if (pref_immersive_mode.equals("immersive_mode_everything")) {
 					View takePhotoButton = (View) main_activity.findViewById(R.id.take_photo);
@@ -656,11 +631,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 	public void layoutUI() {
 		main_activity.layoutUI();
 	}
-	
-	/*@Override
-	public void multitouchZoom(int new_zoom) {
-		main_activity.setSeekbarZoom();
-	}*/
 
 	@Override
 	public void setCameraIdPref(int cameraId) {
@@ -778,12 +748,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 		editor.putString(PreferenceKeys.getResolutionPreferenceKey(cameraId), resolution_value);
 		editor.apply();
 	}
-    
-    /*@Override
-	public void setZoomPref(int zoom) {
-		Log.d(TAG, "setZoomPref: " + zoom);
-    	this.zoom_factor = zoom;
-    }*/
     
     @Override
 	public void setExposureTimePref(long exposure_time) {

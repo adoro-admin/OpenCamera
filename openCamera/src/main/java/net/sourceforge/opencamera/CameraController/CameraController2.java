@@ -48,8 +48,6 @@ public class CameraController2 extends CameraController {
 	private CameraDevice camera = null;
 	private String cameraIdS = null;
 	private CameraCharacteristics characteristics = null;
-	private List<Integer> zoom_ratios = null;
-	private int current_zoom_value = 0;
 	private ErrorCallback preview_error_cb = null;
 	private CameraCaptureSession captureSession = null;
 	private CaptureRequest.Builder previewBuilder = null;
@@ -114,7 +112,6 @@ public class CameraController2 extends CameraController {
 		private MeteringRectangle [] ae_regions = null; // no need for has_scalar_crop_region, as we can set to null instead
 		private boolean has_face_detect_mode = false;
 		private int face_detect_mode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF;
-		private boolean video_stabilization = false;
 
 		private void setupBuilder(CaptureRequest.Builder builder, boolean is_still) {
 			//builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
@@ -135,7 +132,6 @@ public class CameraController2 extends CameraController {
 			setAFRegions(builder);
 			setAERegions(builder);
 			setFaceDetectMode(builder);
-			setVideoStabilization(builder);
 			/*builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 			builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
 			builder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
@@ -316,10 +312,6 @@ public class CameraController2 extends CameraController {
 		private void setFaceDetectMode(CaptureRequest.Builder builder) {
 			if( has_face_detect_mode )
 				builder.set(CaptureRequest.STATISTICS_FACE_DETECT_MODE, face_detect_mode);
-		}
-		
-		private void setVideoStabilization(CaptureRequest.Builder builder) {
-			builder.set(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, video_stabilization ? CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_ON : CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_OFF);
 		}
 		
 		// n.b., if we add more methods, remember to update setupBuilder() above!
@@ -506,11 +498,6 @@ public class CameraController2 extends CameraController {
 				if( MyDebug.LOG )
 					Log.d(TAG, " supports focus_mode_edof");
 			}
-			if( supported_focus_modes.contains(CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO) ) {
-				output_modes.add("focus_mode_continuous_video");
-				if( MyDebug.LOG )
-					Log.d(TAG, " supports focus_mode_continuous_video");
-			}
 		}
 		return output_modes;
 	}
@@ -535,35 +522,6 @@ public class CameraController2 extends CameraController {
 			else
 				Log.e(TAG, "Unknown Hardware Level!");
 		}
-
-		/*float max_zoom = characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
-		camera_features.is_zoom_supported = max_zoom > 0.0f;
-		if( MyDebug.LOG )
-			Log.d(TAG, "max_zoom: " + max_zoom);
-		if( camera_features.is_zoom_supported ) {
-			// set 20 steps per 2x factor
-			final int steps_per_2x_factor = 20;
-			//final double scale_factor = Math.pow(2.0, 1.0/(double)steps_per_2x_factor);
-			int n_steps =(int)( (steps_per_2x_factor * Math.log(max_zoom + 1.0e-11)) / Math.log(2.0));
-			final double scale_factor = Math.pow(max_zoom, 1.0/(double)n_steps);
-			if( MyDebug.LOG ) {
-				Log.d(TAG, "n_steps: " + n_steps);
-				Log.d(TAG, "scale_factor: " + scale_factor);
-			}
-			camera_features.zoom_ratios = new ArrayList<Integer>();
-			camera_features.zoom_ratios.add(100);
-			double zoom = 1.0;
-			for(int i=0;i<n_steps-1;i++) {
-				zoom *= scale_factor;
-				camera_features.zoom_ratios.add((int)(zoom*100));
-			}
-			camera_features.zoom_ratios.add((int)(max_zoom*100));
-			camera_features.max_zoom = camera_features.zoom_ratios.size()-1;
-			this.zoom_ratios = camera_features.zoom_ratios;
-		}
-		else {
-			this.zoom_ratios = null;
-		}*/
 
 		int [] face_modes = characteristics.get(CameraCharacteristics.STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES);
 		camera_features.supports_face_detection = false;
@@ -593,15 +551,6 @@ public class CameraController2 extends CameraController {
 			camera_features.picture_sizes.add(new CameraController.Size(camera_size.getWidth(), camera_size.getHeight()));
 		}
 
-	    /*android.util.Size [] camera_video_sizes = configs.getOutputSizes(MediaRecorder.class);
-		camera_features.video_sizes = new ArrayList<CameraController.Size>();
-		for(android.util.Size camera_size : camera_video_sizes) {
-			if( MyDebug.LOG )
-				Log.d(TAG, "video size: " + camera_size.getWidth() + " x " + camera_size.getHeight());
-			if( camera_size.getWidth() > 3840 || camera_size.getHeight() > 2160 )
-				continue; // Nexus 6 returns these, even though not supported?!
-			camera_features.video_sizes.add(new CameraController.Size(camera_size.getWidth(), camera_size.getHeight()));
-		}*/
 
 		android.util.Size [] camera_preview_sizes = configs.getOutputSizes(SurfaceTexture.class);
 		camera_features.preview_sizes = new ArrayList<CameraController.Size>();
@@ -638,8 +587,7 @@ public class CameraController2 extends CameraController {
 		camera_features.max_num_focus_areas = characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF);
 
 		camera_features.is_exposure_lock_supported = true;
-		
-        /*camera_features.is_video_stabilization_supported = true;*/
+
 
 		Range<Integer> iso_range = characteristics.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
 		if( iso_range != null ) {
@@ -1317,69 +1265,6 @@ public class CameraController2 extends CameraController {
 		}
 		this.camera_settings.jpeg_quality = (byte)quality;
 	}
-
-	/*@Override
-	public int getZoom() {
-		return this.current_zoom_value;
-	}
-
-	@Override
-	public void setZoom(int value) {
-		if( zoom_ratios == null ) {
-			if( MyDebug.LOG )
-				Log.d(TAG, "zoom not supported");
-			return;
-		}
-		if( value < 0 || value > zoom_ratios.size() ) {
-			if( MyDebug.LOG )
-				Log.e(TAG, "invalid zoom value" + value);
-			throw new RuntimeException(); // throw as RuntimeException, as this is a programming error
-		}
-		float zoom = zoom_ratios.get(value)/100.0f;
-		Rect sensor_rect = characteristics.get(CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
-		int left = sensor_rect.width()/2;
-		int right = left;
-		int top = sensor_rect.height()/2;
-		int bottom = top;
-		int hwidth = (int)(sensor_rect.width() / (2.0*zoom));
-		int hheight = (int)(sensor_rect.height() / (2.0*zoom));
-		left -= hwidth;
-		right += hwidth;
-		top -= hheight;
-		bottom += hheight;
-		if( MyDebug.LOG ) {
-			Log.d(TAG, "zoom: " + zoom);
-			Log.d(TAG, "hwidth: " + hwidth);
-			Log.d(TAG, "hheight: " + hheight);
-			Log.d(TAG, "sensor_rect left: " + sensor_rect.left);
-			Log.d(TAG, "sensor_rect top: " + sensor_rect.top);
-			Log.d(TAG, "sensor_rect right: " + sensor_rect.right);
-			Log.d(TAG, "sensor_rect bottom: " + sensor_rect.bottom);
-			Log.d(TAG, "left: " + left);
-			Log.d(TAG, "top: " + top);
-			Log.d(TAG, "right: " + right);
-			Log.d(TAG, "bottom: " + bottom);
-			*//*Rect current_rect = previewBuilder.get(CaptureRequest.SCALER_CROP_REGION);
-			Log.d(TAG, "current_rect left: " + current_rect.left);
-			Log.d(TAG, "current_rect top: " + current_rect.top);
-			Log.d(TAG, "current_rect right: " + current_rect.right);
-			Log.d(TAG, "current_rect bottom: " + current_rect.bottom);*//*
-		}
-		camera_settings.scalar_crop_region = new Rect(left, top, right, bottom);
-		camera_settings.setCropRegion(previewBuilder);
-    	this.current_zoom_value = value;
-    	try {
-    		setRepeatingRequest();
-    	}
-		catch(CameraAccessException e) {
-			if( MyDebug.LOG ) {
-				Log.e(TAG, "failed to set zoom");
-				Log.e(TAG, "reason: " + e.getReason());
-				Log.e(TAG, "message: " + e.getMessage());
-			}
-			e.printStackTrace();
-		} 
-	}*/
 	
 	@Override
 	public int getExposureCompensation() {
@@ -1450,9 +1335,6 @@ public class CameraController2 extends CameraController {
     	else if( focus_value.equals("focus_mode_edof") ) {
     		focus_mode = CaptureRequest.CONTROL_AF_MODE_EDOF;
     	}
-    	else if( focus_value.equals("focus_mode_continuous_video") ) {
-    		focus_mode = CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO;
-    	}
     	else {
     		if( MyDebug.LOG )
     			Log.d(TAG, "setFocusValue() received unknown focus value " + focus_value);
@@ -1487,9 +1369,6 @@ public class CameraController2 extends CameraController {
     	}
 		else if( focus_mode == CaptureRequest.CONTROL_AF_MODE_EDOF ) {
     		focus_value = "focus_mode_edof";
-    	}
-		else if( focus_mode == CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO ) {
-    		focus_value = "focus_mode_continuous_video";
     	}
 		else if( focus_mode == CaptureRequest.CONTROL_AF_MODE_OFF ) {
     		focus_value = "focus_mode_manual2"; // n.b., could be infinity
