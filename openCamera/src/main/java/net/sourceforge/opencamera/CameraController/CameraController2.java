@@ -536,7 +536,7 @@ public class CameraController2 extends CameraController {
 				Log.e(TAG, "Unknown Hardware Level!");
 		}
 
-		float max_zoom = characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
+		/*float max_zoom = characteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM);
 		camera_features.is_zoom_supported = max_zoom > 0.0f;
 		if( MyDebug.LOG )
 			Log.d(TAG, "max_zoom: " + max_zoom);
@@ -563,7 +563,7 @@ public class CameraController2 extends CameraController {
 		}
 		else {
 			this.zoom_ratios = null;
-		}
+		}*/
 
 		int [] face_modes = characteristics.get(CameraCharacteristics.STATISTICS_INFO_AVAILABLE_FACE_DETECT_MODES);
 		camera_features.supports_face_detection = false;
@@ -593,7 +593,7 @@ public class CameraController2 extends CameraController {
 			camera_features.picture_sizes.add(new CameraController.Size(camera_size.getWidth(), camera_size.getHeight()));
 		}
 
-	    android.util.Size [] camera_video_sizes = configs.getOutputSizes(MediaRecorder.class);
+	    /*android.util.Size [] camera_video_sizes = configs.getOutputSizes(MediaRecorder.class);
 		camera_features.video_sizes = new ArrayList<CameraController.Size>();
 		for(android.util.Size camera_size : camera_video_sizes) {
 			if( MyDebug.LOG )
@@ -601,7 +601,7 @@ public class CameraController2 extends CameraController {
 			if( camera_size.getWidth() > 3840 || camera_size.getHeight() > 2160 )
 				continue; // Nexus 6 returns these, even though not supported?!
 			camera_features.video_sizes.add(new CameraController.Size(camera_size.getWidth(), camera_size.getHeight()));
-		}
+		}*/
 
 		android.util.Size [] camera_preview_sizes = configs.getOutputSizes(SurfaceTexture.class);
 		camera_features.preview_sizes = new ArrayList<CameraController.Size>();
@@ -639,7 +639,7 @@ public class CameraController2 extends CameraController {
 
 		camera_features.is_exposure_lock_supported = true;
 		
-        camera_features.is_video_stabilization_supported = true;
+        /*camera_features.is_video_stabilization_supported = true;*/
 
 		Range<Integer> iso_range = characteristics.get(CameraCharacteristics.SENSOR_INFO_SENSITIVITY_RANGE);
 		if( iso_range != null ) {
@@ -1302,27 +1302,6 @@ public class CameraController2 extends CameraController {
 		*/
 	}
 
-	@Override
-	public void setVideoStabilization(boolean enabled) {
-		camera_settings.video_stabilization = enabled;
-		camera_settings.setVideoStabilization(previewBuilder);
-		try {
-			setRepeatingRequest();
-		}
-		catch(CameraAccessException e) {
-			if( MyDebug.LOG ) {
-				Log.e(TAG, "failed to set video stabilization");
-				Log.e(TAG, "reason: " + e.getReason());
-				Log.e(TAG, "message: " + e.getMessage());
-			}
-			e.printStackTrace();
-		} 
-	}
-
-	@Override
-	public boolean getVideoStabilization() {
-		return camera_settings.video_stabilization;
-	}
 
 	@Override
 	public int getJpegQuality() {
@@ -1339,7 +1318,7 @@ public class CameraController2 extends CameraController {
 		this.camera_settings.jpeg_quality = (byte)quality;
 	}
 
-	@Override
+	/*@Override
 	public int getZoom() {
 		return this.current_zoom_value;
 	}
@@ -1380,11 +1359,11 @@ public class CameraController2 extends CameraController {
 			Log.d(TAG, "top: " + top);
 			Log.d(TAG, "right: " + right);
 			Log.d(TAG, "bottom: " + bottom);
-			/*Rect current_rect = previewBuilder.get(CaptureRequest.SCALER_CROP_REGION);
+			*//*Rect current_rect = previewBuilder.get(CaptureRequest.SCALER_CROP_REGION);
 			Log.d(TAG, "current_rect left: " + current_rect.left);
 			Log.d(TAG, "current_rect top: " + current_rect.top);
 			Log.d(TAG, "current_rect right: " + current_rect.right);
-			Log.d(TAG, "current_rect bottom: " + current_rect.bottom);*/
+			Log.d(TAG, "current_rect bottom: " + current_rect.bottom);*//*
 		}
 		camera_settings.scalar_crop_region = new Rect(left, top, right, bottom);
 		camera_settings.setCropRegion(previewBuilder);
@@ -1400,7 +1379,7 @@ public class CameraController2 extends CameraController {
 			}
 			e.printStackTrace();
 		} 
-	}
+	}*/
 	
 	@Override
 	public int getExposureCompensation() {
@@ -1852,17 +1831,6 @@ public class CameraController2 extends CameraController {
 		int focus_mode = previewBuilder.get(CaptureRequest.CONTROL_AF_MODE);
 		if( focus_mode == CaptureRequest.CONTROL_AF_MODE_AUTO || focus_mode == CaptureRequest.CONTROL_AF_MODE_MACRO )
 			return true;
-		return false;
-	}
-
-	@Override
-	public boolean focusIsVideo() {
-		if( previewBuilder.get(CaptureRequest.CONTROL_AF_MODE) == null )
-			return false;
-		int focus_mode = previewBuilder.get(CaptureRequest.CONTROL_AF_MODE);
-		if( focus_mode == CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_VIDEO ) {
-			return true;
-		}
 		return false;
 	}
 
@@ -2457,35 +2425,6 @@ public class CameraController2 extends CameraController {
 	@Override
 	public void unlock() {
 		// do nothing at this stage
-	}
-
-	@Override
-	public void initVideoRecorderPrePrepare(MediaRecorder video_recorder) {
-		// do nothing at this stage
-	}
-
-	@Override
-	public void initVideoRecorderPostPrepare(MediaRecorder video_recorder) throws CameraControllerException {
-		if( MyDebug.LOG )
-			Log.d(TAG, "initVideoRecorderPostPrepare");
-		try {
-			if( MyDebug.LOG )
-				Log.d(TAG, "obtain video_recorder surface");
-			if( MyDebug.LOG )
-				Log.d(TAG, "done");
-			previewBuilder = camera.createCaptureRequest(CameraDevice.TEMPLATE_RECORD);
-			camera_settings.setupBuilder(previewBuilder, false);
-			createCaptureSession(video_recorder);
-		}
-		catch(CameraAccessException e) {
-			if( MyDebug.LOG ) {
-				Log.e(TAG, "failed to create capture request for video");
-				Log.e(TAG, "reason: " + e.getReason());
-				Log.e(TAG, "message: " + e.getMessage());
-			}
-			e.printStackTrace();
-			throw new CameraControllerException();
-		}
 	}
 
 	@Override

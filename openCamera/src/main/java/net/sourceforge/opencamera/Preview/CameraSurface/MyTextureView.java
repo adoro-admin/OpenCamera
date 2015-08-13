@@ -52,11 +52,6 @@ public class MyTextureView extends TextureView implements CameraSurface {
 		}
 	}
 
-	@Override
-	public void setVideoRecorder(MediaRecorder video_recorder) {
-		// should be no need to do anything (see documentation for MediaRecorder.setPreviewDisplay())
-	}
-
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {

@@ -58,11 +58,6 @@ public class MySurfaceView extends SurfaceView implements CameraSurface {
 		}
 	}
 
-	@Override
-	public void setVideoRecorder(MediaRecorder video_recorder) {
-    	video_recorder.setPreviewDisplay(this.getHolder().getSurface());
-	}
-
 	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {

@@ -394,13 +394,13 @@ public class MainActivity extends Activity {
 	    			}
 					return true;
 	    		}
-	    		else if( volume_keys.equals("volume_zoom") ) {
+	    		/*else if( volume_keys.equals("volume_zoom") ) {
 	    			if( keyCode == KeyEvent.KEYCODE_VOLUME_UP )
 	    				this.zoomIn();
 	    			else
 	    				this.zoomOut();
 	                return true;
-	    		}
+	    		}*/
 	    		else if( volume_keys.equals("volume_exposure") ) {
 	    			if( preview.getCameraController() != null ) {
 		    			String value = sharedPreferences.getString(PreferenceKeys.getISOPreferenceKey(), preview.getCameraController().getDefaultISO());
@@ -466,7 +466,7 @@ public class MainActivity extends Activity {
 				preview.requestAutoFocus();
 	            return true;
 			}
-		case KeyEvent.KEYCODE_ZOOM_IN:
+		/*case KeyEvent.KEYCODE_ZOOM_IN:
 			{
 				this.zoomIn();
 	            return true;
@@ -475,12 +475,12 @@ public class MainActivity extends Activity {
 			{
 				this.zoomOut();
 	            return true;
-			}
+			}*/
 		}
         return super.onKeyDown(keyCode, event); 
     }
 	
-	void setSeekbarZoom() {
+	/*void setSeekbarZoom() {
 		if( MyDebug.LOG )
 			Log.d(TAG, "setSeekbarZoom");
 	    SeekBar zoomSeekBar = (SeekBar) findViewById(R.id.zoom_seekbar);
@@ -495,7 +495,7 @@ public class MainActivity extends Activity {
 	
 	public void zoomOut() {
 	    changeSeekbar((SeekBar) findViewById(R.id.zoom_seekbar), 1);
-	}
+	}*/
 	
 	public void changeExposure(int change) {
 	    changeSeekbar((SeekBar) findViewById(R.id.exposure_seekbar), change);
@@ -759,7 +759,7 @@ public class MainActivity extends Activity {
 			view.setLayoutParams(layoutParams);
 			view.setRotation(ui_rotation);
 	
-			view = findViewById(R.id.zoom);
+			/*view = findViewById(R.id.zoom);
 			layoutParams = (RelativeLayout.LayoutParams)view.getLayoutParams();
 			layoutParams.addRule(align_parent_left, 0);
 			layoutParams.addRule(align_parent_right, RelativeLayout.TRUE);
@@ -774,16 +774,16 @@ public class MainActivity extends Activity {
 			layoutParams.addRule(align_right, R.id.zoom);
 			layoutParams.addRule(above, R.id.zoom);
 			layoutParams.addRule(below, 0);
-			view.setLayoutParams(layoutParams);
+			view.setLayoutParams(layoutParams);*/
 
 			view = findViewById(R.id.focus_seekbar);
 			layoutParams = (RelativeLayout.LayoutParams)view.getLayoutParams();
 			layoutParams.addRule(align_left, R.id.preview);
 			layoutParams.addRule(align_right, 0);
-			layoutParams.addRule(left_of, R.id.zoom_seekbar);
+			layoutParams.addRule(left_of, 0);
 			layoutParams.addRule(right_of, 0);
 			layoutParams.addRule(align_top, 0);
-			layoutParams.addRule(align_bottom, R.id.zoom_seekbar);
+			layoutParams.addRule(align_bottom, 0);
 			view.setLayoutParams(layoutParams);
 		}
 
@@ -2047,7 +2047,7 @@ public class MainActivity extends Activity {
 			}
 		}*/
 
-    	SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+    	/*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		{
 			if( MyDebug.LOG )
 				Log.d(TAG, "set up zoom");
@@ -2113,7 +2113,7 @@ public class MainActivity extends Activity {
 				zoomControls.setVisibility(View.GONE);
 				zoomSeekBar.setVisibility(View.GONE);
 			}
-		}
+		}*/
 		{
 			if( MyDebug.LOG )
 				Log.d(TAG, "set up manual focus");

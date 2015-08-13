@@ -1,22 +1,5 @@
 package net.sourceforge.opencamera;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
-import net.sourceforge.opencamera.CameraController.CameraController;
-import net.sourceforge.opencamera.Preview.ApplicationInterface;
-import net.sourceforge.opencamera.Preview.Preview;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -30,20 +13,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.graphics.Paint.Align;
 import android.location.Location;
-import android.media.CamcorderProfile;
 import android.media.ExifInterface;
-import android.media.MediaMetadataRetriever;
-import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ParcelFileDescriptor;
 import android.preference.PreferenceManager;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -54,6 +33,23 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+
+import net.sourceforge.opencamera.CameraController.CameraController;
+import net.sourceforge.opencamera.Preview.ApplicationInterface;
+import net.sourceforge.opencamera.Preview.Preview;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class MyApplicationInterface implements ApplicationInterface {
 	private static final String TAG = "MyApplicationInterface";
@@ -168,60 +164,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 	public Location getLocation() {
 		return locationSupplier.getLocation();
 	}
-	
-	/*@Override
-	public int createOutputVideoMethod() {
-        String action = main_activity.getIntent().getAction();
-        if( MediaStore.ACTION_VIDEO_CAPTURE.equals(action) ) {
-			if( MyDebug.LOG )
-				Log.d(TAG, "from video capture intent");
-	        Bundle myExtras = main_activity.getIntent().getExtras();
-	        if (myExtras != null) {
-	        	Uri intent_uri = (Uri) myExtras.getParcelable(MediaStore.EXTRA_OUTPUT);
-	        	if( intent_uri != null ) {
-	    			if( MyDebug.LOG )
-	    				Log.d(TAG, "save to: " + intent_uri);
-	        		return VIDEOMETHOD_URI;
-	        	}
-	        }
-        	// if no EXTRA_OUTPUT, we should save to standard location, and will pass back the Uri of that location
-			if( MyDebug.LOG )
-				Log.d(TAG, "intent uri not specified");
-			// note that SAF URIs don't seem to work for calling applications (tested with Grabilla and "Photo Grabber Image From Video" (FreezeFrame)), so we use standard folder with non-SAF method
-			return VIDEOMETHOD_FILE;
-        }
-        boolean using_saf = storageUtils.isUsingSAF();
-		return using_saf ? VIDEOMETHOD_SAF : VIDEOMETHOD_FILE;
-	}
-
-	@Override
-	public File createOutputVideoFile() throws IOException {
-		return storageUtils.createOutputMediaFile(StorageUtils.MEDIA_TYPE_VIDEO);
-	}
-
-	@Override
-	public Uri createOutputVideoSAF() throws IOException {
-		return storageUtils.createOutputMediaFileSAF(StorageUtils.MEDIA_TYPE_VIDEO);
-	}
-
-	@Override
-	public Uri createOutputVideoUri() throws IOException {
-        String action = main_activity.getIntent().getAction();
-        if( MediaStore.ACTION_VIDEO_CAPTURE.equals(action) ) {
-			if( MyDebug.LOG )
-				Log.d(TAG, "from video capture intent");
-	        Bundle myExtras = main_activity.getIntent().getExtras();
-	        if (myExtras != null) {
-	        	Uri intent_uri = (Uri) myExtras.getParcelable(MediaStore.EXTRA_OUTPUT);
-	        	if( intent_uri != null ) {
-	    			if( MyDebug.LOG )
-	    				Log.d(TAG, "save to: " + intent_uri);
-	    			return intent_uri;
-	        	}
-	        }
-        }
-        throw new RuntimeException(); // programming error if we arrived here
-	}*/
 
 	@Override
 	public int getCameraIdPref() {
@@ -239,23 +181,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 		return sharedPreferences.getString(PreferenceKeys.getFocusPreferenceKey(cameraId), "");
     }
-
-    /*@Override
-	public boolean isVideoPref() {
-        String action = main_activity.getIntent().getAction();
-        if( MediaStore.INTENT_ACTION_VIDEO_CAMERA.equals(action) || MediaStore.ACTION_VIDEO_CAPTURE.equals(action) ) {
-    		if( MyDebug.LOG )
-    			Log.d(TAG, "launching from video intent");
-    		return true;
-		}
-        else if( MediaStore.ACTION_IMAGE_CAPTURE.equals(action) || MediaStore.ACTION_IMAGE_CAPTURE_SECURE.equals(action) || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA.equals(action) || MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA_SECURE.equals(action) ) {
-    		if( MyDebug.LOG )
-    			Log.d(TAG, "launching from photo intent");
-    		return false;
-		}
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-		return sharedPreferences.getBoolean(PreferenceKeys.getIsVideoPreferenceKey(), false);
-    }*/
 
     @Override
 	public String getSceneModePref() {
@@ -362,80 +287,7 @@ public class MyApplicationInterface implements ApplicationInterface {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 		return sharedPreferences.getBoolean(PreferenceKeys.getFaceDetectionPreferenceKey(), false);
     }
-    
-	/*@Override
-	public String getVideoQualityPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-		return sharedPreferences.getString(PreferenceKeys.getVideoQualityPreferenceKey(cameraId), "");
-	}
-	
-    @Override
-	public boolean getVideoStabilizationPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-		return sharedPreferences.getBoolean(PreferenceKeys.getVideoStabilizationPreferenceKey(), false);
-    }
-    
-    @Override
-	public boolean getForce4KPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-		if( cameraId == 0 && sharedPreferences.getBoolean(PreferenceKeys.getForceVideo4KPreferenceKey(), false) && main_activity.supportsForceVideo4K() ) {
-			return true;
-		}
-		return false;
-    }
-    
-    @Override
-    public String getVideoBitratePref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-    	return sharedPreferences.getString(PreferenceKeys.getVideoBitratePreferenceKey(), "default");
-    }
 
-    @Override
-    public String getVideoFPSPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-    	return sharedPreferences.getString(PreferenceKeys.getVideoFPSPreferenceKey(), "default");
-    }
-    
-    @Override
-    public long getVideoMaxDurationPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-		String video_max_duration_value = sharedPreferences.getString(PreferenceKeys.getVideoMaxDurationPreferenceKey(), "0");
-		long video_max_duration = 0;
-		try {
-			video_max_duration = Integer.parseInt(video_max_duration_value) * 1000;
-		}
-        catch(NumberFormatException e) {
-    		if( MyDebug.LOG )
-    			Log.e(TAG, "failed to parse preference_video_max_duration value: " + video_max_duration_value);
-    		e.printStackTrace();
-    		video_max_duration = 0;
-        }
-		return video_max_duration;
-    }
-    
-    @Override
-    public int getVideoRestartTimesPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-		String restart_value = sharedPreferences.getString(PreferenceKeys.getVideoRestartPreferenceKey(), "0");
-		int remaining_restart_video = 0;
-		try {
-			remaining_restart_video = Integer.parseInt(restart_value);
-		}
-        catch(NumberFormatException e) {
-    		if( MyDebug.LOG )
-    			Log.e(TAG, "failed to parse preference_video_restart value: " + restart_value);
-    		e.printStackTrace();
-    		remaining_restart_video = 0;
-        }
-		return remaining_restart_video;
-    }
-    
-    @Override
-    public boolean getVideoFlashPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-    	return sharedPreferences.getBoolean(PreferenceKeys.getVideoFlashPreferenceKey(), false);
-    }*/
-    
     @Override
 	public String getPreviewSizePref() {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -547,24 +399,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
     	return sharedPreferences.getBoolean(PreferenceKeys.getGPSDirectionPreferenceKey(), false);
     }
-    
-    /*@Override
-	public boolean getRecordAudioPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-    	return sharedPreferences.getBoolean(PreferenceKeys.getRecordAudioPreferenceKey(), true);
-    }
-    
-    @Override
-    public String getRecordAudioChannelsPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-    	return sharedPreferences.getString(PreferenceKeys.getRecordAudioChannelsPreferenceKey(), "audio_default");
-    }
-    
-    @Override
-    public String getRecordAudioSourcePref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-    	return sharedPreferences.getString(PreferenceKeys.getRecordAudioSourcePreferenceKey(), "audio_src_camcorder");
-    }*/
 
     private boolean getAutoStabilisePref() {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -617,17 +451,17 @@ public class MyApplicationInterface implements ApplicationInterface {
 		return font_size;
     }
     
-    @Override
+    /*@Override
     public int getZoomPref() {
 		if( MyDebug.LOG )
 			Log.d(TAG, "getZoomPref: " + zoom_factor);
     	return zoom_factor;
-    }
+    }*/
 
     @Override
     public long getExposureTimePref() {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-    	return sharedPreferences.getLong(PreferenceKeys.getExposureTimePreferenceKey(), 1000000000l/30);
+    	return sharedPreferences.getLong(PreferenceKeys.getExposureTimePreferenceKey(), 1000000000l / 30);
     }
     
     @Override
@@ -639,126 +473,6 @@ public class MyApplicationInterface implements ApplicationInterface {
     public boolean isTestAlwaysFocus() {
     	return main_activity.is_test;
     }
-
-	/*@Override
-	public void stoppedVideo(final int video_method, final Uri uri, final String filename) {
-		if( MyDebug.LOG ) {
-			Log.d(TAG, "stoppedVideo");
-			Log.d(TAG, "video_method " + video_method);
-			Log.d(TAG, "uri " + uri);
-			Log.d(TAG, "filename " + filename);
-		}
-		boolean done = false;
-		if( video_method == VIDEOMETHOD_FILE ) {
-			if( filename != null ) {
-				File file = new File(filename);
-				storageUtils.broadcastFile(file, false, true);
-				done = true;
-			}
-		}
-		else {
-			if( uri != null ) {
-			    // still need to announce, as we didn't do this via broadcastFile
-			    storageUtils.announceUri(uri, false, true);
-			    done = true;
-			}
-		}
-		if( MyDebug.LOG )
-			Log.d(TAG, "done? " + done);
-
-		String action = main_activity.getIntent().getAction();
-        if( MediaStore.ACTION_VIDEO_CAPTURE.equals(action) ) {
-    		if( done && video_method == VIDEOMETHOD_FILE ) {
-    			// do nothing here - we end the activity from storageUtils.broadcastFile after the file has been scanned, as it seems caller apps seem to prefer the content:// Uri rather than one based on a File
-    		}
-    		else {
-    			if( MyDebug.LOG )
-    				Log.d(TAG, "from video capture intent");
-    			Intent output = null;
-    			if( done ) {
-    				// may need to pass back the Uri we saved to, if the calling application didn't specify a Uri
-    				// set note above for VIDEOMETHOD_FILE
-    				// n.b., currently this code is not used, as we always switch to VIDEOMETHOD_FILE if the calling application didn't specify a Uri, but I've left this here for possible future behaviour
-    				if( video_method == VIDEOMETHOD_SAF ) {
-    					output = new Intent();
-    					output.setData(uri);
-    					if( MyDebug.LOG )
-    						Log.d(TAG, "pass back output uri [saf]: " + output.getData());
-    				}
-    			}
-            	main_activity.setResult(done ? Activity.RESULT_OK : Activity.RESULT_CANCELED, output);
-            	main_activity.finish();
-    		}
-        }
-        else if( done ) {
-			// create thumbnail
-	    	long time_s = System.currentTimeMillis();
-			Bitmap thumbnail = null;
-		    MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-			try {
-				if( video_method == VIDEOMETHOD_FILE ) {
-					File file = new File(filename);
-					retriever.setDataSource(file.getPath());
-				}
-				else {
-					ParcelFileDescriptor pfd_saf = getContext().getContentResolver().openFileDescriptor(uri, "r");
-					retriever.setDataSource(pfd_saf.getFileDescriptor());
-				}
-				thumbnail = retriever.getFrameAtTime(-1);
-			}
-		    catch(FileNotFoundException e) {
-		    	// video file wasn't saved?
-				Log.d(TAG, "failed to find thumbnail");
-		    	e.printStackTrace();
-		    }
-		    catch(IllegalArgumentException e) {
-		    	// corrupt video file?
-				Log.d(TAG, "failed to find thumbnail");
-		    	e.printStackTrace();
-		    }
-		    catch(RuntimeException e) {
-		    	// corrupt video file?
-				Log.d(TAG, "failed to find thumbnail");
-		    	e.printStackTrace();
-		    }
-		    finally {
-		    	try {
-		    		retriever.release();
-		    	}
-		    	catch(RuntimeException ex) {
-		    		// ignore
-		    	}
-		    }
-		    if( thumbnail != null ) {
-		    	ImageButton galleryButton = (ImageButton) main_activity.findViewById(R.id.gallery);
-		    	int width = thumbnail.getWidth();
-		    	int height = thumbnail.getHeight();
-				if( MyDebug.LOG )
-					Log.d(TAG, "    video thumbnail size " + width + " x " + height);
-		    	if( width > galleryButton.getWidth() ) {
-		    		float scale = (float) galleryButton.getWidth() / width;
-		    		int new_width = Math.round(scale * width);
-		    		int new_height = Math.round(scale * height);
-					if( MyDebug.LOG )
-						Log.d(TAG, "    scale video thumbnail to " + new_width + " x " + new_height);
-		    		Bitmap scaled_thumbnail = Bitmap.createScaledBitmap(thumbnail, new_width, new_height, true);
-	    		    // careful, as scaled_thumbnail is sometimes not a copy!
-	    		    if( scaled_thumbnail != thumbnail ) {
-	    		    	thumbnail.recycle();
-	    		    	thumbnail = scaled_thumbnail;
-	    		    }
-		    	}
-		    	final Bitmap thumbnail_f = thumbnail;
-		    	main_activity.runOnUiThread(new Runnable() {
-					public void run() {
-		    	    	updateThumbnail(thumbnail_f);
-					}
-				});
-		    }
-			if( MyDebug.LOG )
-				Log.d(TAG, "    time to create thumbnail: " + (System.currentTimeMillis() - time_s));
-		}
-	}*/
 
 	@Override
 	public void cameraSetup() {
@@ -773,59 +487,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 			main_activity.setImmersiveMode(false);
 		}
 	}
-	
-	/*@Override
-	public void startingVideo() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-		if( sharedPreferences.getBoolean(PreferenceKeys.getLockVideoPreferenceKey(), false) ) {
-			main_activity.lockScreen();
-		}
-		ImageButton view = (ImageButton)main_activity.findViewById(R.id.take_photo);
-		view.setImageResource(R.drawable.take_video_recording);
-		view.setTag(R.drawable.take_video_recording); // for testing
-	}
-
-	@Override
-	public void stoppingVideo() {
-		main_activity.unlockScreen();
-		if( main_activity.getPreview().isVideoRecording() ) {
-			String toast = getContext().getResources().getString(R.string.stopped_recording_video);
-			if( main_activity.getPreview().getRemainingRestartVideo() > 0 ) {
-				toast += " (" + main_activity.getPreview().getRemainingRestartVideo() + " " + getContext().getResources().getString(R.string.repeats_to_go) + ")";
-			}
-			main_activity.getPreview().showToast(stopstart_video_toast, toast);
-		}
-		ImageButton view = (ImageButton)main_activity.findViewById(R.id.take_photo);
-		view.setImageResource(R.drawable.take_video_selector);
-		view.setTag(R.drawable.take_video_selector); // for testing
-	}
-
-	@Override
-	public void onVideoInfo(int what, int extra) {
-		if( what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED || what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED ) {
-			int message_id = 0;
-			if( what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED ) {
-				if( MyDebug.LOG )
-					Log.d(TAG, "max duration reached");
-				message_id = R.string.video_max_duration;
-			}
-			else if( what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED ) {
-				if( MyDebug.LOG )
-					Log.d(TAG, "max filesize reached");
-				message_id = R.string.video_max_filesize;
-			}
-			if( message_id != 0 )
-				main_activity.getPreview().showToast(null, message_id);
-			// in versions 1.24 and 1.24, there was a bug where we had "info_" for onVideoError and "error_" for onVideoInfo!
-			// fixed in 1.25; also was correct for 1.23 and earlier
-			String debug_value = "info_" + what + "_" + extra;
-			SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-			SharedPreferences.Editor editor = sharedPreferences.edit();
-			editor.putString("last_video_error", debug_value);
-			editor.apply();
-			main_activity.getPreview().stopVideo(false);
-		}
-	}*/
 
 	@Override
 	public void onFailedStartPreview() {
@@ -836,69 +497,11 @@ public class MyApplicationInterface implements ApplicationInterface {
 	public void onPhotoError() {
 	    main_activity.getPreview().showToast(null, R.string.failed_to_take_picture);
 	}
-
-	/*@Override
-	public void onVideoError(int what, int extra) {
-		if( MyDebug.LOG ) {
-			Log.d(TAG, "onVideoError: " + what + " extra: " + extra);
-		}
-		int message_id = R.string.video_error_unknown;
-		if( what == MediaRecorder.MEDIA_ERROR_SERVER_DIED  ) {
-			if( MyDebug.LOG )
-				Log.d(TAG, "error: server died");
-			message_id = R.string.video_error_server_died;
-		}
-		main_activity.getPreview().showToast(null, message_id);
-		// in versions 1.24 and 1.24, there was a bug where we had "info_" for onVideoError and "error_" for onVideoInfo!
-		// fixed in 1.25; also was correct for 1.23 and earlier
-		String debug_value = "error_" + what + "_" + extra;
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-		SharedPreferences.Editor editor = sharedPreferences.edit();
-		editor.putString("last_video_error", debug_value);
-		editor.apply();
-		main_activity.getPreview().stopVideo(false);
-	}*/
-	
-	/*@Override
-	public void onVideoRecordStartError(CamcorderProfile profile) {
-		if( MyDebug.LOG )
-			Log.d(TAG, "onVideoRecordStartError");
-		String error_message = "";
-		String features = main_activity.getPreview().getErrorFeatures(profile);
-		if( features.length() > 0 ) {
-			error_message = getContext().getResources().getString(R.string.sorry) + ", " + features + " " + getContext().getResources().getString(R.string.not_supported);
-		}
-		else {
-			error_message = getContext().getResources().getString(R.string.failed_to_record_video);
-		}
-		main_activity.getPreview().showToast(null, error_message);
-		ImageButton view = (ImageButton)main_activity.findViewById(R.id.take_photo);
-		view.setImageResource(R.drawable.take_video_selector);
-		view.setTag(R.drawable.take_video_selector); // for testing
-	}*/
-
-	/*@Override
-	public void onVideoRecordStopError(CamcorderProfile profile) {
-		if( MyDebug.LOG )
-			Log.d(TAG, "onVideoRecordStopError");
-		//main_activity.getPreview().showToast(null, R.string.failed_to_record_video);
-		String features = main_activity.getPreview().getErrorFeatures(profile);
-		String error_message = getContext().getResources().getString(R.string.video_may_be_corrupted);
-		if( features.length() > 0 ) {
-			error_message += ", " + features + " " + getContext().getResources().getString(R.string.not_supported);
-		}
-		main_activity.getPreview().showToast(null, error_message);
-	}*/
 	
 	@Override
 	public void onFailedReconnectError() {
 		main_activity.getPreview().showToast(null, R.string.failed_to_reconnect_camera);
 	}
-	
-	/*@Override
-	public void onFailedCreateVideoFileError() {
-		main_activity.getPreview().showToast(null, R.string.failed_to_save_video);
-	}*/
 
     void setImmersiveMode(final boolean immersive_mode) {
 		if( MyDebug.LOG )
@@ -908,31 +511,29 @@ public class MyApplicationInterface implements ApplicationInterface {
 			public void run() {
 				SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);
 				// if going into immersive mode, the we should set GONE the ones that are set GONE in showGUI(false)
-		    	//final int visibility_gone = immersive_mode ? View.GONE : View.VISIBLE;
-		    	final int visibility = immersive_mode ? View.GONE : View.VISIBLE;
-				if( MyDebug.LOG )
+				//final int visibility_gone = immersive_mode ? View.GONE : View.VISIBLE;
+				final int visibility = immersive_mode ? View.GONE : View.VISIBLE;
+				if (MyDebug.LOG)
 					Log.d(TAG, "setImmersiveMode: set visibility: " + visibility);
-		    	// n.b., don't hide share and trash buttons, as they require immediate user input for us to continue
-			    View switchCameraButton = (View) main_activity.findViewById(R.id.switch_camera);
-			    /*View switchVideoButton = (View) main_activity.findViewById(R.id.switch_video);*/
-			    View exposureButton = (View) main_activity.findViewById(R.id.exposure);
-			    View exposureLockButton = (View) main_activity.findViewById(R.id.exposure_lock);
-			    View popupButton = (View) main_activity.findViewById(R.id.popup);
-			    View galleryButton = (View) main_activity.findViewById(R.id.gallery);
-			    View settingsButton = (View) main_activity.findViewById(R.id.settings);
-			    View zoomControls = (View) main_activity.findViewById(R.id.zoom);
-			    View zoomSeekBar = (View) main_activity.findViewById(R.id.zoom_seekbar);
-			    if( main_activity.getPreview().getCameraControllerManager().getNumberOfCameras() > 1 )
-			    	switchCameraButton.setVisibility(visibility);
-		    	/*switchVideoButton.setVisibility(visibility);*/
-			    if( main_activity.supportsExposureButton() )
-			    	exposureButton.setVisibility(visibility);
-			    if( main_activity.getPreview().supportsExposureLock() )
-			    	exposureLockButton.setVisibility(visibility);
-		    	popupButton.setVisibility(visibility);
-			    galleryButton.setVisibility(visibility);
-			    settingsButton.setVisibility(visibility);
-				if( MyDebug.LOG ) {
+				// n.b., don't hide share and trash buttons, as they require immediate user input for us to continue
+				View switchCameraButton = (View) main_activity.findViewById(R.id.switch_camera);
+				View exposureButton = (View) main_activity.findViewById(R.id.exposure);
+				View exposureLockButton = (View) main_activity.findViewById(R.id.exposure_lock);
+				View popupButton = (View) main_activity.findViewById(R.id.popup);
+				View galleryButton = (View) main_activity.findViewById(R.id.gallery);
+				View settingsButton = (View) main_activity.findViewById(R.id.settings);
+			    /*View zoomControls = (View) main_activity.findViewById(R.id.zoom);
+			    View zoomSeekBar = (View) main_activity.findViewById(R.id.zoom_seekbar);*/
+				if (main_activity.getPreview().getCameraControllerManager().getNumberOfCameras() > 1)
+					switchCameraButton.setVisibility(visibility);
+				if (main_activity.supportsExposureButton())
+					exposureButton.setVisibility(visibility);
+				if (main_activity.getPreview().supportsExposureLock())
+					exposureLockButton.setVisibility(visibility);
+				popupButton.setVisibility(visibility);
+				galleryButton.setVisibility(visibility);
+				settingsButton.setVisibility(visibility);
+				/*if( MyDebug.LOG ) {
 					Log.d(TAG, "has_zoom: " + main_activity.getPreview().supportsZoom());
 				}
 				if( main_activity.getPreview().supportsZoom() && sharedPreferences.getBoolean(PreferenceKeys.getShowZoomControlsPreferenceKey(), false) ) {
@@ -940,13 +541,13 @@ public class MyApplicationInterface implements ApplicationInterface {
 				}
 				if( main_activity.getPreview().supportsZoom() && sharedPreferences.getBoolean(PreferenceKeys.getShowZoomSliderControlsPreferenceKey(), true) ) {
 					zoomSeekBar.setVisibility(visibility);
+				}*/
+				String pref_immersive_mode = sharedPreferences.getString(PreferenceKeys.getImmersiveModePreferenceKey(), "immersive_mode_low_profile");
+				if (pref_immersive_mode.equals("immersive_mode_everything")) {
+					View takePhotoButton = (View) main_activity.findViewById(R.id.take_photo);
+					takePhotoButton.setVisibility(visibility);
 				}
-        		String pref_immersive_mode = sharedPreferences.getString(PreferenceKeys.getImmersiveModePreferenceKey(), "immersive_mode_low_profile");
-        		if( pref_immersive_mode.equals("immersive_mode_everything") ) {
-    			    View takePhotoButton = (View) main_activity.findViewById(R.id.take_photo);
-    			    takePhotoButton.setVisibility(visibility);
-        		}
-				if( !immersive_mode ) {
+				if (!immersive_mode) {
 					// make sure the GUI is set up as expected
 					showGUI(show_gui);
 				}
@@ -970,25 +571,21 @@ public class MyApplicationInterface implements ApplicationInterface {
 		}
 		main_activity.runOnUiThread(new Runnable() {
 			public void run() {
-		    	final int visibility = show ? View.VISIBLE : View.GONE;
-			    View switchCameraButton = (View) main_activity.findViewById(R.id.switch_camera);
-			    /*View switchVideoButton = (View) main_activity.findViewById(R.id.switch_video);*/
-			    View exposureButton = (View) main_activity.findViewById(R.id.exposure);
-			    View exposureLockButton = (View) main_activity.findViewById(R.id.exposure_lock);
-			    View popupButton = (View) main_activity.findViewById(R.id.popup);
-			    if( main_activity.getPreview().getCameraControllerManager().getNumberOfCameras() > 1 )
-			    	switchCameraButton.setVisibility(visibility);
-			    /*if( !main_activity.getPreview().isVideo() )
-			    	switchVideoButton.setVisibility(visibility); // still allow switch video when recording video*/
-			    if( main_activity.supportsExposureButton() ) // still allow exposure when recording video
-			    	exposureButton.setVisibility(visibility);
-			    if( main_activity.getPreview().supportsExposureLock()) // still allow exposure lock when recording video
-			    	exposureLockButton.setVisibility(visibility);
-			    if( !show ) {
-			    	main_activity.closePopup(); // we still allow the popup when recording video, but need to update the UI (so it only shows flash options), so easiest to just close
-			    }
-			    /*if( !main_activity.getPreview().isVideo() || !main_activity.getPreview().supportsFlash() )*/
-			    	popupButton.setVisibility(visibility); // still allow popup in order to change flash mode when recording video
+				final int visibility = show ? View.VISIBLE : View.GONE;
+				View switchCameraButton = (View) main_activity.findViewById(R.id.switch_camera);
+				View exposureButton = (View) main_activity.findViewById(R.id.exposure);
+				View exposureLockButton = (View) main_activity.findViewById(R.id.exposure_lock);
+				View popupButton = (View) main_activity.findViewById(R.id.popup);
+				if (main_activity.getPreview().getCameraControllerManager().getNumberOfCameras() > 1)
+					switchCameraButton.setVisibility(visibility);
+				if (main_activity.supportsExposureButton()) // still allow exposure when recording video
+					exposureButton.setVisibility(visibility);
+				if (main_activity.getPreview().supportsExposureLock()) // still allow exposure lock when recording video
+					exposureLockButton.setVisibility(visibility);
+				if (!show) {
+					main_activity.closePopup(); // we still allow the popup when recording video, but need to update the UI (so it only shows flash options), so easiest to just close
+				}
+				popupButton.setVisibility(visibility); // still allow popup in order to change flash mode when recording video
 			}
 		});
     }
@@ -1060,10 +657,10 @@ public class MyApplicationInterface implements ApplicationInterface {
 		main_activity.layoutUI();
 	}
 	
-	@Override
+	/*@Override
 	public void multitouchZoom(int new_zoom) {
 		main_activity.setSeekbarZoom();
-	}
+	}*/
 
 	@Override
 	public void setCameraIdPref(int cameraId) {
@@ -1089,14 +686,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 	    View focusSeekBar = (SeekBar) main_activity.findViewById(R.id.focus_seekbar);
 	    focusSeekBar.setVisibility(visibility);
     }
-
-    /*@Override
-	public void setVideoPref(boolean is_video) {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-		SharedPreferences.Editor editor = sharedPreferences.edit();
-		editor.putBoolean(PreferenceKeys.getIsVideoPreferenceKey(), is_video);
-		editor.apply();
-    }*/
 
     @Override
     public void setSceneModePref(String scene_mode) {
@@ -1181,28 +770,20 @@ public class MyApplicationInterface implements ApplicationInterface {
     @Override
 	public void setCameraResolutionPref(int width, int height) {
 		String resolution_value = width + " " + height;
-		if( MyDebug.LOG ) {
+		if (MyDebug.LOG) {
 			Log.d(TAG, "save new resolution_value: " + resolution_value);
 		}
-    	SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putString(PreferenceKeys.getResolutionPreferenceKey(cameraId), resolution_value);
 		editor.apply();
-    }
+	}
     
     /*@Override
-    public void setVideoQualityPref(String video_quality) {
-    	SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-		SharedPreferences.Editor editor = sharedPreferences.edit();
-		editor.putString(PreferenceKeys.getVideoQualityPreferenceKey(cameraId), video_quality);
-		editor.apply();
-    }*/
-    
-    @Override
 	public void setZoomPref(int zoom) {
 		Log.d(TAG, "setZoomPref: " + zoom);
     	this.zoom_factor = zoom;
-    }
+    }*/
     
     @Override
 	public void setExposureTimePref(long exposure_time) {
@@ -1413,7 +994,7 @@ public class MyApplicationInterface implements ApplicationInterface {
 			}
 		}
 
-		if( /*preview.isVideo() ||*/ sharedPreferences.getString(PreferenceKeys.getPreviewSizePreferenceKey(), "preference_preview_size_wysiwyg").equals("preference_preview_size_wysiwyg") ) {
+		if( sharedPreferences.getString(PreferenceKeys.getPreviewSizePreferenceKey(), "preference_preview_size_wysiwyg").equals("preference_preview_size_wysiwyg") ) {
 			String preference_crop_guide = sharedPreferences.getString(PreferenceKeys.getShowCropGuidePreferenceKey(), "crop_guide_none");
 			if( camera_controller != null && preview.getTargetRatio() > 0.0 && !preference_crop_guide.equals("crop_guide_none") ) {
 				p.setStyle(Paint.Style.STROKE);
@@ -1615,32 +1196,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 					drawTextWithBackground(canvas, p, "" + remaining_time, Color.rgb(244, 67, 54), Color.BLACK, canvas.getWidth() / 2, canvas.getHeight() / 2); // Red 500
 				}
 			}
-			/*else if( preview.isVideoRecording() ) {
-            	long video_time = preview.getVideoTime();
-            	//int ms = (int)(video_time % 1000);
-            	video_time /= 1000;
-            	int secs = (int)(video_time % 60);
-            	video_time /= 60;
-            	int mins = (int)(video_time % 60);
-            	video_time /= 60;
-            	long hours = video_time;
-            	//String time_s = hours + ":" + String.format("%02d", mins) + ":" + String.format("%02d", secs) + ":" + String.format("%03d", ms);
-            	String time_s = hours + ":" + String.format("%02d", mins) + ":" + String.format("%02d", secs);
-            	*//*if( MyDebug.LOG )
-					Log.d(TAG, "video_time: " + video_time + " " + time_s);*//*
-    			p.setTextSize(14 * scale + 0.5f); // convert dps to pixels
-    			p.setTextAlign(Paint.Align.CENTER);
-				int pixels_offset_y = 3*text_y; // avoid overwriting the zoom or ISO label
-				int color = Color.rgb(244, 67, 54); // Red 500
-            	if( main_activity.isScreenLocked() ) {
-            		// writing in reverse order, bottom to top
-            		drawTextWithBackground(canvas, p, getContext().getResources().getString(R.string.screen_lock_message_2), color, Color.BLACK, canvas.getWidth() / 2, text_base_y - pixels_offset_y);
-            		pixels_offset_y += text_y;
-            		drawTextWithBackground(canvas, p, getContext().getResources().getString(R.string.screen_lock_message_1), color, Color.BLACK, canvas.getWidth() / 2, text_base_y - pixels_offset_y);
-            		pixels_offset_y += text_y;
-            	}
-            	drawTextWithBackground(canvas, p, time_s, color, Color.BLACK, canvas.getWidth() / 2, text_base_y - pixels_offset_y);
-			}*/
 		}
 		else if( camera_controller == null ) {
 			/*if( MyDebug.LOG ) {
@@ -1683,17 +1238,6 @@ public class MyApplicationInterface implements ApplicationInterface {
 			}
 			if( string.length() > 0 ) {
 				drawTextWithBackground(canvas, p, string, Color.rgb(255, 235, 59), Color.BLACK, canvas.getWidth() / 2, text_base_y - pixels_offset_y, false, ybounds_text, true); // Yellow 500
-			}
-		}
-		if( preview.supportsZoom() && camera_controller != null && sharedPreferences.getBoolean(PreferenceKeys.getShowZoomPreferenceKey(), true) ) {
-			float zoom_ratio = preview.getZoomRatio();
-			// only show when actually zoomed in
-			if( zoom_ratio > 1.0f + 1.0e-5f ) {
-				// Convert the dps to pixels, based on density scale
-				int pixels_offset_y = text_y;
-				p.setTextSize(14 * scale + 0.5f); // convert dps to pixels
-				p.setTextAlign(Paint.Align.CENTER);
-				drawTextWithBackground(canvas, p, getContext().getResources().getString(R.string.zoom) + ": " + zoom_ratio +"x", Color.WHITE, Color.BLACK, canvas.getWidth() / 2, text_base_y - pixels_offset_y, false, ybounds_text, true);
 			}
 		}
 

@@ -24,7 +24,7 @@
 		android:background="@null"
         />
 
-    <ZoomControls
+    <!--<ZoomControls
         android:id="@+id/zoom"
         android:contentDescription="@string/zoom"
         android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp"
-        />
+        />-->
     
     <SeekBar
         android:id="@+id/focus_seekbar"
@@ -116,17 +116,6 @@
         android:src="@drawable/exposure"
         android:onClick="clickedExposure"
         />
-
-    <!--<ImageButton
-        android:id="@+id/switch_video"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:padding="10dp"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/switch_video"
-        android:src="@drawable/switch_video"
-        android:onClick="clickedSwitchVideo"
-        />-->
 
     <ImageButton
         android:id="@+id/switch_camera"

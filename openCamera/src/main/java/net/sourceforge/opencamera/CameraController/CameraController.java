@@ -19,19 +19,17 @@ public abstract class CameraController {
 	public int count_camera_parameters_exception = 0;
 
 	public static class CameraFeatures {
-		public boolean is_zoom_supported = false;
+		/*public boolean is_zoom_supported = false;
 		public int max_zoom = 0;
-		public List<Integer> zoom_ratios = null;
+		public List<Integer> zoom_ratios = null;*/
 		public boolean supports_face_detection = false;
 		public List<CameraController.Size> picture_sizes = null;
-		public List<CameraController.Size> video_sizes = null;
 		public List<CameraController.Size> preview_sizes = null;
 		public List<String> supported_flash_values = null;
 		public List<String> supported_focus_values = null;
 		public int max_num_focus_areas = 0;
 		public float minimum_focus_distance = 0.0f;
 		public boolean is_exposure_lock_supported = false;
-		public boolean is_video_stabilization_supported = false;
 		public boolean supports_iso_range = false;
 		public int min_iso = 0;
 		public int max_iso = 0;
@@ -129,12 +127,10 @@ public abstract class CameraController {
     public abstract void setPictureSize(int width, int height);
     public abstract CameraController.Size getPreviewSize();
     public abstract void setPreviewSize(int width, int height);
-	public abstract void setVideoStabilization(boolean enabled);
-	public abstract boolean getVideoStabilization();
 	public abstract int getJpegQuality();
 	public abstract void setJpegQuality(int quality);
-	public abstract int getZoom();
-	public abstract void setZoom(int value);
+	/*public abstract int getZoom();
+	public abstract void setZoom(int value);*/
 	public abstract int getExposureCompensation();
 	public abstract boolean setExposureCompensation(int new_exposure);
 	public abstract void setPreviewFpsRange(int min, int max);
@@ -172,7 +168,6 @@ public abstract class CameraController {
 	public abstract List<CameraController.Area> getFocusAreas();
 	public abstract List<CameraController.Area> getMeteringAreas();
 	public abstract boolean supportsAutoFocus();
-	public abstract boolean focusIsVideo();
 	public abstract void reconnect() throws CameraControllerException;
 	public abstract void setPreviewDisplay(SurfaceHolder holder) throws CameraControllerException;
 	public abstract void setPreviewTexture(SurfaceTexture texture) throws CameraControllerException;
@@ -188,8 +183,6 @@ public abstract class CameraController {
 	public abstract int getCameraOrientation();
 	public abstract boolean isFrontFacing();
 	public abstract void unlock();
-	public abstract void initVideoRecorderPrePrepare(MediaRecorder video_recorder);
-	public abstract void initVideoRecorderPostPrepare(MediaRecorder video_recorder) throws CameraControllerException;
 	public abstract String getParametersString();
 	public boolean captureResultHasIso() {
 		return false;

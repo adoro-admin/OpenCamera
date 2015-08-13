@@ -188,7 +188,7 @@ public class CameraController1 extends CameraController {
 			Log.d(TAG, "getCameraFeatures()");
 	    Camera.Parameters parameters = this.getParameters();
 	    CameraFeatures camera_features = new CameraFeatures();
-		camera_features.is_zoom_supported = parameters.isZoomSupported();
+		/*camera_features.is_zoom_supported = parameters.isZoomSupported();
 		if( camera_features.is_zoom_supported ) {
 			camera_features.max_zoom = parameters.getMaxZoom();
 			try {
@@ -204,7 +204,7 @@ public class CameraController1 extends CameraController {
 				camera_features.max_zoom = 0;
 				camera_features.zoom_ratios = null;
 			}
-		}
+		}*/
 
 		camera_features.supports_face_detection = parameters.getMaxNumDetectedFaces() > 0;
 
@@ -226,7 +226,7 @@ public class CameraController1 extends CameraController {
 
         camera_features.is_exposure_lock_supported = parameters.isAutoExposureLockSupported();
 
-        camera_features.is_video_stabilization_supported = parameters.isVideoStabilizationSupported();
+        /*camera_features.is_video_stabilization_supported = parameters.isVideoStabilizationSupported();*/
         
         camera_features.min_exposure = parameters.getMinExposureCompensation();
         camera_features.max_exposure = parameters.getMaxExposureCompensation();
@@ -241,7 +241,7 @@ public class CameraController1 extends CameraController {
         	camera_features.exposure_step = 1.0f/3.0f; // make up a typical example
         }
 
-		List<Camera.Size> camera_video_sizes = parameters.getSupportedVideoSizes();
+		/*List<Camera.Size> camera_video_sizes = parameters.getSupportedVideoSizes();
     	if( camera_video_sizes == null ) {
     		// if null, we should use the preview sizes - see http://stackoverflow.com/questions/14263521/android-getsupportedvideosizes-allways-returns-null
     		if( MyDebug.LOG )
@@ -252,7 +252,7 @@ public class CameraController1 extends CameraController {
 		//camera_features.video_sizes.add(new CameraController.Size(1920, 1080)); // test
 		for(Camera.Size camera_size : camera_video_sizes) {
 			camera_features.video_sizes.add(new CameraController.Size(camera_size.width, camera_size.height));
-		}
+		}*/
 
 		List<Camera.Size> camera_preview_sizes = parameters.getSupportedPreviewSizes();
 		camera_features.preview_sizes = new ArrayList<CameraController.Size>();
@@ -518,7 +518,7 @@ public class CameraController1 extends CameraController {
     	setCameraParameters(parameters);
 	}
 	
-	public int getZoom() {
+	/*public int getZoom() {
 		Camera.Parameters parameters = this.getParameters();
 		return parameters.getZoom();
 	}
@@ -529,7 +529,7 @@ public class CameraController1 extends CameraController {
 			Log.d(TAG, "zoom was: " + parameters.getZoom());
 		parameters.setZoom(value);
     	setCameraParameters(parameters);
-	}
+	}*/
 
 	public int getExposureCompensation() {
 		Camera.Parameters parameters = this.getParameters();
@@ -1105,16 +1105,6 @@ public class CameraController1 extends CameraController {
 	public void unlock() {
 		this.stopPreview(); // although not documented, we need to stop preview to prevent device freeze or video errors shortly after video recording starts on some devices (e.g., device freeze on Samsung Galaxy S2 - I could reproduce this on Samsung RTL; also video recording fails and preview becomes corrupted on Galaxy S3 variant "SGH-I747-US2"); also see http://stackoverflow.com/questions/4244999/problem-with-video-recording-after-auto-focus-in-android
 		camera.unlock();
-	}
-	
-	@Override
-	public void initVideoRecorderPrePrepare(MediaRecorder video_recorder) {
-    	video_recorder.setCamera(camera);
-	}
-	
-	@Override
-	public void initVideoRecorderPostPrepare(MediaRecorder video_recorder) throws CameraControllerException {
-		// no further actions necessary
 	}
 	
 	@Override
