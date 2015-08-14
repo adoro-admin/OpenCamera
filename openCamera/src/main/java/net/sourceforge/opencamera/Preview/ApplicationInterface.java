@@ -18,7 +18,7 @@ public interface ApplicationInterface {
 	// if Preview doesn't support the requested setting, it will check this, and choose its own
 	int getCameraIdPref(); // camera to use, from 0 to getCameraControllerManager().getNumberOfCameras()
 	String getFlashPref(); // flash_off, flash_auto, flash_on, flash_torch, flash_red_eye
-	String getFocusPref(); // focus_mode_auto, focus_mode_infinity, focus_mode_macro, focus_mode_locked, focus_mode_fixed, focus_mode_manual2, focus_mode_edof, focus_mode_continuous_video
+	/*String getFocusPref(); // focus_mode_auto, focus_mode_infinity, focus_mode_macro, focus_mode_locked, focus_mode_fixed, focus_mode_manual2, focus_mode_edof, focus_mode_continuous_video*/
 
 	String getSceneModePref(); // "auto" for default (strings correspond to Android's scene mode constants in android.hardware.Camera.Parameters)
 	String getColorEffectPref(); // "node" for default (strings correspond to Android's color effect constants in android.hardware.Camera.Parameters)
@@ -31,7 +31,6 @@ public interface ApplicationInterface {
 
 	String getPreviewSizePref(); // "preference_preview_size_wysiwyg" is recommended (preview matches aspect ratio of photo resolution as close as possible), but can also be "preference_preview_size_display" to maximise the preview size
 	String getPreviewRotationPref(); // return "0" for default; use "180" to rotate the preview 180 degrees
-	String getLockOrientationPref(); // return "none" for default; use "portrait" or "landscape" to lock photos/videos to that orientation
     boolean getTouchCapturePref(); // whether to enable touch to capture
     boolean getDoubleTapCapturePref(); // whether to enable double-tap to capture
 	boolean getPausePreviewPref(); // whether to pause the preview after taking a photo
@@ -70,7 +69,7 @@ public interface ApplicationInterface {
 	// the application can use this information to update its preferences
 	void setCameraIdPref(int cameraId);
 	void setFlashPref(String flash_value);
-	void setFocusPref(String focus_value);
+	/*void setFocusPref(String focus_value);*/
 
 	void setSceneModePref(String scene_mode);
 	void clearSceneModePref();

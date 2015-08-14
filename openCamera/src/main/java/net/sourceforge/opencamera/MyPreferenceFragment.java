@@ -1,23 +1,10 @@
 package net.sourceforge.opencamera;
 
-import net.sourceforge.opencamera.Preview.Preview;
-import net.sourceforge.opencamera.UI.FolderChooserDialog;
-
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.AlertDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -28,8 +15,10 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.Display;
 import android.widget.Toast;
+
+import net.sourceforge.opencamera.Preview.Preview;
+import net.sourceforge.opencamera.UI.FolderChooserDialog;
 
 public class MyPreferenceFragment extends PreferenceFragment implements OnSharedPreferenceChangeListener {
 	private static final String TAG = "MyPreferenceFragment";
@@ -76,13 +65,13 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
         	pg.removePreference(pref);
 		}
 
-		final int preview_width = bundle.getInt("preview_width");
+		/*final int preview_width = bundle.getInt("preview_width");
 		final int preview_height = bundle.getInt("preview_height");
 		final int [] preview_widths = bundle.getIntArray("preview_widths");
 		final int [] preview_heights = bundle.getIntArray("preview_heights");
 
 		final int resolution_width = bundle.getInt("resolution_width");
-		final int resolution_height = bundle.getInt("resolution_height");
+		final int resolution_height = bundle.getInt("resolution_height");*/
 		final int [] widths = bundle.getIntArray("resolution_widths");
 		final int [] heights = bundle.getIntArray("resolution_heights");
 		if( widths != null && heights != null ) {
@@ -146,7 +135,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
         	pg.removePreference(pref);
         }
 
-		final boolean supports_camera2 = bundle.getBoolean("supports_camera2");
+		/*final boolean supports_camera2 = bundle.getBoolean("supports_camera2");
 		if( MyDebug.LOG )
 			Log.d(TAG, "supports_camera2: " + supports_camera2);
         if( supports_camera2 ) {
@@ -171,9 +160,9 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
         	Preference pref = findPreference("preference_use_camera2");
         	PreferenceGroup pg = (PreferenceGroup)this.findPreference("preference_category_online");
         	pg.removePreference(pref);
-        }
+        }*/
         
-        {
+        /*{
             final Preference pref = findPreference("preference_online_help");
             pref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
@@ -188,7 +177,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
                 	return false;
                 }
             });
-        }
+        }*/
 
         /*{
         	EditTextPreference edit = (EditTextPreference)findPreference("preference_save_location");
@@ -262,7 +251,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
             });
         }
 
-        {
+        /*{
             final Preference pref = findPreference("preference_donate");
             pref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
@@ -270,7 +259,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
                 	if( pref.getKey().equals("preference_donate") ) {
                 		if( MyDebug.LOG )
                 			Log.d(TAG, "user clicked to donate");
-            	        /*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.getDonateMarketLink()));
+            	        *//*Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.getDonateMarketLink()));
             	        try {
             	        	startActivity(browserIntent);
             	        }
@@ -280,7 +269,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
             					Log.d(TAG, "can't launch market:// intent");
                 	        browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.getDonateLink()));
             	        	startActivity(browserIntent);
-            			}*/
+            			}*//*
             	        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(MainActivity.getDonateLink()));
         	        	startActivity(browserIntent);
                 		return false;
@@ -288,9 +277,9 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
                 	return false;
                 }
             });
-        }
+        }*/
 
-        {
+        /*{
             final Preference pref = findPreference("preference_about");
             pref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
                 @Override
@@ -532,7 +521,7 @@ public class MyPreferenceFragment extends PreferenceFragment implements OnShared
                 	return false;
                 }
             });
-        }
+        }*/
 	}
 	
 	/*private void readFromBundle(Bundle bundle, String intent_key, String preference_key, String default_value, String preference_category_key) {

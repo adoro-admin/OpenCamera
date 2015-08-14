@@ -1,10 +1,9 @@
 package net.sourceforge.opencamera.Preview.CameraSurface;
 
-import net.sourceforge.opencamera.CameraController.CameraController;
-
 import android.graphics.Matrix;
-import android.media.MediaRecorder;
 import android.view.View;
+
+import net.sourceforge.opencamera.CameraController.CameraController;
 
 public interface CameraSurface {
 	abstract View getView();

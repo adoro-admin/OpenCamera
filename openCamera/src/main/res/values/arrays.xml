@@ -21,7 +21,7 @@
         <item>flash_torch</item>
         <item>flash_red_eye</item>
     </string-array>
-    <string-array name="focus_mode_icons">
+    <!--<string-array name="focus_mode_icons">
         <item>drawable/focus_mode_auto</item>
         <item>drawable/focus_mode_infinity</item>
         <item>drawable/focus_mode_macro</item>
@@ -50,7 +50,7 @@
         <item>focus_mode_fixed</item>
         <item>focus_mode_edof</item>
         <item>focus_mode_continuous_video</item>
-    </string-array>
+    </string-array>-->
     <string-array name="preference_lock_orientation_entries">
         <item>No lock</item>
         <item>Lock to landscape</item>
@@ -161,8 +161,8 @@
     </string-array>
     <string-array name="preference_volume_keys_entries">
         <item>Take photo (or start/stop video recording)</item>
-        <item>Focus</item>
-        <item>Zoom in/out</item>
+        <!--<item>Focus</item>
+        <item>Zoom in/out</item>-->
         <item>Change exposure level</item>
         <item>Switch auto-stabilise on/off</item>
         <item>Change device volume</item>
@@ -170,8 +170,8 @@
         </string-array>
     <string-array name="preference_volume_keys_values">
         <item>volume_take_photo</item>
-        <item>volume_focus</item>
-        <item>volume_zoom</item>
+        <!--<item>volume_focus</item>
+        <item>volume_zoom</item>-->
         <item>volume_exposure</item>
         <item>volume_auto_stabilise</item>
         <item>volume_nothing</item><!-- actually means change device volume! -->

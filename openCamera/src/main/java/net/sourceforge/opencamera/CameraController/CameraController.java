@@ -152,8 +152,8 @@ public abstract class CameraController {
 	public abstract void setFlashValue(String flash_value);
 	public abstract String getFlashValue();
 	public abstract void setRecordingHint(boolean hint);
-	public abstract void setAutoExposureLock(boolean enabled);
-	public abstract boolean getAutoExposureLock();
+	/*public abstract void setAutoExposureLock(boolean enabled);
+	public abstract boolean getAutoExposureLock();*/
 	public abstract void setRotation(int rotation);
 	public abstract void setLocationInfo(Location location);
 	public abstract void removeLocationInfo();
@@ -161,7 +161,7 @@ public abstract class CameraController {
 	public abstract boolean setFocusAndMeteringArea(List<CameraController.Area> areas);
 	public abstract void clearFocusAndMetering();
 	public abstract List<CameraController.Area> getFocusAreas();
-	public abstract List<CameraController.Area> getMeteringAreas();
+	/*public abstract List<CameraController.Area> getMeteringAreas();*/
 	public abstract boolean supportsAutoFocus();
 	public abstract void reconnect() throws CameraControllerException;
 	public abstract void setPreviewDisplay(SurfaceHolder holder) throws CameraControllerException;

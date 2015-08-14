@@ -72,7 +72,7 @@ public class PopupView extends LinearLayout {
     		// don't add any more options
     	}
     	else {
-        	List<String> supported_focus_values = preview.getSupportedFocusValues();
+        	/*List<String> supported_focus_values = preview.getSupportedFocusValues();
         	addButtonOptionsToPopup(supported_focus_values, R.array.focus_mode_icons, R.array.focus_mode_values, getResources().getString(R.string.focus_mode), preview.getCurrentFocusValue(), "TEST_FOCUS", new ButtonOptionsPopupListener() {
     			@Override
     			public void onClick(String option) {
@@ -81,7 +81,7 @@ public class PopupView extends LinearLayout {
     				preview.updateFocus(option, false, true);
     				main_activity.closePopup();
     			}
-    		});
+    		});*/
             
     		List<String> supported_isos = preview.getSupportedISOs();
     		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(main_activity);

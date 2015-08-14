@@ -697,7 +697,7 @@ public class CameraController1 extends CameraController {
         }
 	}
 
-	public void setAutoExposureLock(boolean enabled) {
+	/*public void setAutoExposureLock(boolean enabled) {
 		Camera.Parameters parameters = this.getParameters();
 		parameters.setAutoExposureLock(enabled);
     	setCameraParameters(parameters);
@@ -708,7 +708,7 @@ public class CameraController1 extends CameraController {
 		if( !parameters.isAutoExposureLockSupported() )
 			return false;
 		return parameters.getAutoExposureLock();
-	}
+	}*/
 
 	public void setRotation(int rotation) {
 		Camera.Parameters parameters = this.getParameters();
@@ -815,7 +815,7 @@ public class CameraController1 extends CameraController {
 		return areas;
 	}
 
-	public List<CameraController.Area> getMeteringAreas() {
+	/*public List<CameraController.Area> getMeteringAreas() {
         Camera.Parameters parameters = this.getParameters();
 		List<Camera.Area> camera_areas = parameters.getMeteringAreas();
 		if( camera_areas == null )
@@ -825,7 +825,7 @@ public class CameraController1 extends CameraController {
 			areas.add(new CameraController.Area(camera_area.rect, camera_area.weight));
 		}
 		return areas;
-	}
+	}*/
 
 	public boolean supportsAutoFocus() {
         Camera.Parameters parameters = this.getParameters();

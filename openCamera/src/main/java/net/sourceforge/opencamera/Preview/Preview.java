@@ -121,8 +121,8 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	private int current_focus_index = -1; // this is an index into the supported_focus_values array, or -1 if no focus modes available
 	private int max_num_focus_areas = 0;
 	
-	private boolean is_exposure_lock_supported = false;
-	private boolean is_exposure_locked = false;
+	/*private boolean is_exposure_lock_supported = false;
+	private boolean is_exposure_locked = false;*/
 
 	private List<String> color_effects = null;
 	private List<String> scene_modes = null;
@@ -150,7 +150,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 
 	private Toast last_toast = null;
 	private ToastBoxer flash_toast = new ToastBoxer();
-	private ToastBoxer focus_toast = new ToastBoxer();
+	/*private ToastBoxer focus_toast = new ToastBoxer();*/
 	private ToastBoxer take_photo_toast = new ToastBoxer();
 	private ToastBoxer seekbar_toast = new ToastBoxer();
 	
@@ -897,7 +897,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 			handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {
-					if( MyDebug.LOG )
+					if (MyDebug.LOG)
 						Log.d(TAG, "do startup autofocus");
 					tryAutoFocus(true, false); // so we get the autofocus when starting up - we do this on a delay, as calling it immediately means the autofocus doesn't seem to work properly sometimes (at least on Galaxy Nexus)
 				}
@@ -948,7 +948,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	        supported_flash_values = camera_features.supported_flash_values;
 	        supported_focus_values = camera_features.supported_focus_values;
 	        this.max_num_focus_areas = camera_features.max_num_focus_areas;
-	        this.is_exposure_lock_supported = camera_features.is_exposure_lock_supported;
+	        /*this.is_exposure_lock_supported = camera_features.is_exposure_lock_supported;*/
 	        this.can_disable_shutter_sound = camera_features.can_disable_shutter_sound;
 	        this.supports_iso_range = camera_features.supports_iso_range;
 	        this.min_iso = camera_features.min_iso;
@@ -1199,7 +1199,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 			}
 		}
 
-		{
+		/*{
 			if( MyDebug.LOG )
 				Log.d(TAG, "set up focus");
 			current_focus_index = -1;
@@ -1214,7 +1214,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 					Log.d(TAG, "focus not supported");
 				supported_focus_values = null;
 			}
-			/*supported_focus_values = new Vector<String>();
+			*//*supported_focus_values = new Vector<String>();
 			supported_focus_values.add("focus_mode_auto");
 			supported_focus_values.add("focus_mode_infinity");
 			supported_focus_values.add("focus_mode_macro");
@@ -1222,10 +1222,10 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 			supported_focus_values.add("focus_mode_manual2");
 			supported_focus_values.add("focus_mode_fixed");
 			supported_focus_values.add("focus_mode_edof");
-			supported_focus_values.add("focus_mode_continuous_video");*/
-		    /*View focusModeButton = (View) activity.findViewById(R.id.focus_mode);
-			focusModeButton.setVisibility(supported_focus_values != null && !immersive_mode ? View.VISIBLE : View.GONE);*/
-		}
+			supported_focus_values.add("focus_mode_continuous_video");*//*
+		    *//*View focusModeButton = (View) activity.findViewById(R.id.focus_mode);
+			focusModeButton.setVisibility(supported_focus_values != null && !immersive_mode ? View.VISIBLE : View.GONE);*//*
+		}*/
 
 		{
 			float focus_distance_value = applicationInterface.getFocusDistancePref();
@@ -1240,13 +1240,13 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 			applicationInterface.setFocusDistancePref(focus_distance_value);
 		}
 
-		{
+		/*{
 			if( MyDebug.LOG )
 				Log.d(TAG, "set up exposure lock");
 	    	// exposure lock should always default to false, as doesn't make sense to save it - we can't really preserve a "lock" after the camera is reopened
 	    	// also note that it isn't safe to lock the exposure before starting the preview
 	    	is_exposure_locked = false;
-		}
+		}*/
 
 		if( MyDebug.LOG ) {
 			Log.d(TAG, "time after setting up camera parameters: " + (System.currentTimeMillis() - debug_time));
@@ -1552,7 +1552,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	private int getImageVideoRotation() {
 		if( MyDebug.LOG )
 			Log.d(TAG, "getImageVideoRotation() from current_rotation " + current_rotation);
-		String lock_orientation = applicationInterface.getLockOrientationPref();
+		/*String lock_orientation = applicationInterface.getLockOrientationPref();
 		if( lock_orientation.equals("landscape") ) {
 			int camera_orientation = camera_controller.getCameraOrientation();
 		    int device_orientation = getDeviceDefaultOrientation();
@@ -1574,30 +1574,30 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 				Log.d(TAG, "getImageVideoRotation() lock to landscape, returns " + result);
 		    return result;
 		}
-		else if( lock_orientation.equals("portrait") ) {
-			int camera_orientation = camera_controller.getCameraOrientation();
-		    int result = 0;
-		    int device_orientation = getDeviceDefaultOrientation();
-		    if( device_orientation == Configuration.ORIENTATION_PORTRAIT ) {
-		    	// should be equivalent to onOrientationChanged(0)
-		    	result = camera_orientation;
-		    }
-		    else {
-		    	// should be equivalent to onOrientationChanged(90)
-			    if( camera_controller.isFrontFacing() ) {
-			    	result = (camera_orientation + 270) % 360;
-			    }
-			    else {
-			    	result = (camera_orientation + 90) % 360;
-			    }
-		    }
-			if( MyDebug.LOG )
-				Log.d(TAG, "getImageVideoRotation() lock to portrait, returns " + result);
-		    return result;
+		else if( lock_orientation.equals("portrait") ) {*/
+		int camera_orientation = camera_controller.getCameraOrientation();
+		int result = 0;
+		int device_orientation = getDeviceDefaultOrientation();
+		if( device_orientation == Configuration.ORIENTATION_PORTRAIT ) {
+			// should be equivalent to onOrientationChanged(0)
+			result = camera_orientation;
+		}
+		else {
+			// should be equivalent to onOrientationChanged(90)
+			if( camera_controller.isFrontFacing() ) {
+				result = (camera_orientation + 270) % 360;
+			}
+			else {
+				result = (camera_orientation + 90) % 360;
+			}
 		}
 		if( MyDebug.LOG )
+			Log.d(TAG, "getImageVideoRotation() lock to portrait, returns " + result);
+		return result;
+		/*}
+		if( MyDebug.LOG )
 			Log.d(TAG, "getImageVideoRotation() returns current_rotation " + current_rotation);
-		return this.current_rotation;
+		return this.current_rotation;*/
 	}
 
 	public void draw(Canvas canvas) {
@@ -1856,7 +1856,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
         camera_controller.setPreviewFpsRange(selected_fps[0], selected_fps[1]);
 	}
 	
-	private void setFocusPref(boolean auto_focus) {
+	/*private void setFocusPref(boolean auto_focus) {
 		if( MyDebug.LOG )
 			Log.d(TAG, "setFocusPref()");
 		String focus_value = applicationInterface.getFocusPref();
@@ -1874,7 +1874,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 				Log.d(TAG, "found no existing focus_value");
 			updateFocus("focus_mode_auto", true, true, auto_focus);
 		}
-	}
+	}*/
 
 	public void updateFlash(String focus_value) {
 		if( MyDebug.LOG )
@@ -1969,7 +1969,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		return flash_mode;
 	}*/
 
-	public void updateFocus(String focus_value, boolean quiet, boolean auto_focus) {
+	/*public void updateFocus(String focus_value, boolean quiet, boolean auto_focus) {
 		if( MyDebug.LOG )
 			Log.d(TAG, "updateFocus(): " + focus_value);
 		if( this.phase == PHASE_TAKING_PHOTO ) {
@@ -1979,9 +1979,9 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 			return;
 		}
 		updateFocus(focus_value, quiet, true, auto_focus);
-	}
+	}*/
 
-	private boolean updateFocus(String focus_value, boolean quiet, boolean save, boolean auto_focus) {
+	/*private boolean updateFocus(String focus_value, boolean quiet, boolean save, boolean auto_focus) {
 		if( MyDebug.LOG )
 			Log.d(TAG, "updateFocus(): " + focus_value);
 		if( this.supported_focus_values != null ) {
@@ -2009,12 +2009,12 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
     		}
     	}
     	return null;
-	}
+	}*/
 	
-	public String findFocusEntryForValue(String focus_value) {
+	/*public String findFocusEntryForValue(String focus_value) {
 		return findEntryForValue(focus_value, R.array.focus_mode_entries, R.array.focus_mode_values);
 	}
-	
+
 	private void updateFocus(int new_focus_index, boolean quiet, boolean save, boolean auto_focus) {
 		if( MyDebug.LOG )
 			Log.d(TAG, "updateFocus(): " + new_focus_index + " current_focus_index: " + current_focus_index);
@@ -2041,7 +2041,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 	    	}
 		}
 	}
-	
+
 	// this returns the flash mode indicated by the UI, rather than from the camera parameters
 	public String getCurrentFocusValue() {
 		if( MyDebug.LOG )
@@ -2070,9 +2070,9 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 		if( auto_focus && !focus_value.equals("focus_mode_locked") ) {
 			tryAutoFocus(false, false);
 		}
-	}
+	}*/
 
-	public void toggleExposureLock() {
+	/*public void toggleExposureLock() {
 		if( MyDebug.LOG )
 			Log.d(TAG, "toggleExposureLock()");
 		// n.b., need to allow when recording video, so no check on PHASE_TAKING_PHOTO
@@ -2086,7 +2086,7 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
 			cancelAutoFocus();
 	        camera_controller.setAutoExposureLock(is_exposure_locked);
 		}
-	}
+	}*/
 
 	public void takePicturePressed() {
 		if( MyDebug.LOG )
@@ -3092,13 +3092,13 @@ public class Preview implements SurfaceHolder.Callback, TextureView.SurfaceTextu
     	return this.supported_flash_values != null;
     }
     
-    public boolean supportsExposureLock() {
+    /*public boolean supportsExposureLock() {
     	return this.is_exposure_lock_supported;
     }
     
     public boolean isExposureLocked() {
     	return this.is_exposure_locked;
-    }
+    }*/
     
     public boolean hasFocusArea() {
     	return this.has_focus_area;

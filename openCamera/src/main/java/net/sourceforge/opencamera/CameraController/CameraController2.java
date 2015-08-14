@@ -107,9 +107,9 @@ public class CameraController2 extends CameraController {
 		private int af_mode = CaptureRequest.CONTROL_AF_MODE_AUTO;
 		private float focus_distance = 0.0f; // actual value passed to camera device (set to 0.0 if in infinity mode)
 		private float focus_distance_manual = 0.0f; // saved setting when in manual mode
-		private boolean ae_lock = false;
+		/*private boolean ae_lock = false;*/
 		private MeteringRectangle [] af_regions = null; // no need for has_scalar_crop_region, as we can set to null instead
-		private MeteringRectangle [] ae_regions = null; // no need for has_scalar_crop_region, as we can set to null instead
+		/*private MeteringRectangle [] ae_regions = null; // no need for has_scalar_crop_region, as we can set to null instead*/
 		private boolean has_face_detect_mode = false;
 		private int face_detect_mode = CaptureRequest.STATISTICS_FACE_DETECT_MODE_OFF;
 
@@ -128,9 +128,9 @@ public class CameraController2 extends CameraController {
 			setExposureCompensation(builder);
 			setFocusMode(builder);
 			setFocusDistance(builder);
-			setAutoExposureLock(builder);
+			/*setAutoExposureLock(builder);*/
 			setAFRegions(builder);
-			setAERegions(builder);
+			/*setAERegions(builder);*/
 			setFaceDetectMode(builder);
 			/*builder.set(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_AUTO);
 			builder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_AUTO);
@@ -293,9 +293,9 @@ public class CameraController2 extends CameraController {
 			builder.set(CaptureRequest.LENS_FOCUS_DISTANCE, focus_distance);
 		}
 
-		private void setAutoExposureLock(CaptureRequest.Builder builder) {
+		/*private void setAutoExposureLock(CaptureRequest.Builder builder) {
 	    	builder.set(CaptureRequest.CONTROL_AE_LOCK, ae_lock);
-		}
+		}*/
 
 		private void setAFRegions(CaptureRequest.Builder builder) {
 			if( af_regions != null && characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AF) > 0 ) {
@@ -303,11 +303,11 @@ public class CameraController2 extends CameraController {
 			}
 		}
 
-		private void setAERegions(CaptureRequest.Builder builder) {
+		/*private void setAERegions(CaptureRequest.Builder builder) {
 			if( ae_regions != null && characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE) > 0 ) {
 				builder.set(CaptureRequest.CONTROL_AE_REGIONS, ae_regions);
 			}
-		}
+		}*/
 
 		private void setFaceDetectMode(CaptureRequest.Builder builder) {
 			if( has_face_detect_mode )
@@ -320,8 +320,8 @@ public class CameraController2 extends CameraController {
 	private CameraSettings camera_settings = new CameraSettings();
 	private boolean push_repeating_request_when_torch_off = false;
 	private CaptureRequest push_repeating_request_when_torch_off_id = null;
-	private boolean push_set_ae_lock = false;
-	private CaptureRequest push_set_ae_lock_id = null;
+	/*private boolean push_set_ae_lock = false;
+	private CaptureRequest push_set_ae_lock_id = null;*/
 
 	public CameraController2(Context context, int cameraId, ErrorCallback preview_error_cb) throws CameraControllerException {
 		super(cameraId);
@@ -1471,7 +1471,7 @@ public class CameraController2 extends CameraController {
 		// not relevant for CameraController2
 	}
 
-	@Override
+	/*@Override
 	public void setAutoExposureLock(boolean enabled) {
 		camera_settings.ae_lock = enabled;
 		camera_settings.setAutoExposureLock(previewBuilder);
@@ -1493,7 +1493,7 @@ public class CameraController2 extends CameraController {
 		if( previewBuilder.get(CaptureRequest.CONTROL_AE_LOCK) == null )
 			return false;
     	return previewBuilder.get(CaptureRequest.CONTROL_AE_LOCK);
-	}
+	}*/
 
 	@Override
 	public void setRotation(int rotation) {
@@ -1601,7 +1601,7 @@ public class CameraController2 extends CameraController {
 		}
 		else
 			camera_settings.af_regions = null;
-		if( characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE) > 0 ) {
+		/*if( characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE) > 0 ) {
 			has_metering = true;
 			camera_settings.ae_regions = new MeteringRectangle[areas.size()];
 			int i = 0;
@@ -1611,7 +1611,7 @@ public class CameraController2 extends CameraController {
 			camera_settings.setAERegions(previewBuilder);
 		}
 		else
-			camera_settings.ae_regions = null;
+			camera_settings.ae_regions = null;*/
 		if( has_focus || has_metering ) {
 			try {
 				setRepeatingRequest();
@@ -1641,14 +1641,14 @@ public class CameraController2 extends CameraController {
 		}
 		else
 			camera_settings.af_regions = null;
-		if( characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE) > 0 ) {
+		/*if( characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE) > 0 ) {
 			has_metering = true;
 			camera_settings.ae_regions = new MeteringRectangle[1];
 			camera_settings.ae_regions[0] = new MeteringRectangle(0, 0, sensor_rect.width()-1, sensor_rect.height()-1, 0);
 			camera_settings.setAERegions(previewBuilder);
 		}
 		else
-			camera_settings.ae_regions = null;
+			camera_settings.ae_regions = null;*/
 		if( has_focus || has_metering ) {
 			try {
 				setRepeatingRequest();
@@ -1684,7 +1684,7 @@ public class CameraController2 extends CameraController {
 		return areas;
 	}
 
-	@Override
+	/*@Override
 	public List<Area> getMeteringAreas() {
 		if( characteristics.get(CameraCharacteristics.CONTROL_MAX_REGIONS_AE) == 0 )
 			return null;
@@ -1701,7 +1701,7 @@ public class CameraController2 extends CameraController {
 			areas.add(convertMeteringRectangleToArea(sensor_rect, metering_rectangles[i]));
 		}
 		return areas;
-	}
+	}*/
 
 	@Override
 	public boolean supportsAutoFocus() {
@@ -2052,12 +2052,12 @@ public class CameraController2 extends CameraController {
 					Log.d(TAG, i + " focus area: " + areas[i].getX() + " , " + areas[i].getY() + " : " + areas[i].getWidth() + " x " + areas[i].getHeight() + " weight " + areas[i].getMeteringWeight());
 				}
 			}
-			{
+			/*{
 				MeteringRectangle [] areas = previewBuilder.get(CaptureRequest.CONTROL_AE_REGIONS);
 				for(int i=0;areas != null && i<areas.length;i++) {
 					Log.d(TAG, i + " metering area: " + areas[i].getX() + " , " + areas[i].getY() + " : " + areas[i].getWidth() + " x " + areas[i].getHeight() + " weight " + areas[i].getMeteringWeight());
 				}
-			}
+			}*/
 		}
     	/*if( focus_areas != null ) {
         	previewBuilder.set(CaptureRequest.CONTROL_AF_REGIONS, focus_areas);
@@ -2162,7 +2162,7 @@ public class CameraController2 extends CameraController {
 					camera_settings.setAEMode(previewBuilder, false); // not sure if needed, but the AE mode is set again in Camera2Basic
 					// n.b., if capture/setRepeatingRequest throw exception, we don't call the take_picture_error_cb.onError() callback, as the photo should have been taken by this point
 					try {
-			            if( !camera_settings.ae_lock && camera_settings.flash_value.equals("flash_on") ) {
+			            /*if( !camera_settings.ae_lock && camera_settings.flash_value.equals("flash_on") ) {
 							// hack - needed to fix bug on Nexus 6 where auto-exposure sometimes locks when taking a photo of bright scene with flash on!
 			            	// this doesn't completely resolve the issue, but seems to make it far less common; also when it does happen, taking another photo usually fixes it
 			            	previewBuilder.set(CaptureRequest.CONTROL_AE_LOCK, true);
@@ -2170,9 +2170,9 @@ public class CameraController2 extends CameraController {
 			            	push_set_ae_lock_id = previewBuilder.build();
 			            	capture(push_set_ae_lock_id);
 			            }
-			            else {
+			            else {*/
 			            	capture();
-			            }
+			            /*}*/
 					}
 					catch(CameraAccessException e) {
 						if( MyDebug.LOG ) {
@@ -2543,7 +2543,7 @@ public class CameraController2 extends CameraController {
 					} 
 				}
 			}
-			if( is_total && push_set_ae_lock && push_set_ae_lock_id == request ) {
+			/*if( is_total && push_set_ae_lock && push_set_ae_lock_id == request ) {
 				if( MyDebug.LOG )
 					Log.d(TAG, "received push_set_ae_lock");
 				push_set_ae_lock = false;
@@ -2560,7 +2560,7 @@ public class CameraController2 extends CameraController {
 					}
 					e.printStackTrace();
 				} 
-			}
+			}*/
 		}
 	};
 }

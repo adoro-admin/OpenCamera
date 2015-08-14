@@ -29,7 +29,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
-import android.os.StatFs;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
@@ -72,12 +71,11 @@ import java.util.Map;
 public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 	private SensorManager mSensorManager = null;
-	private Sensor mSensorAccelerometer = null;
 	private Sensor mSensorMagnetic = null;
 	private MyApplicationInterface applicationInterface = null;
 	private Preview preview = null;
 	private int current_orientation = 0;
-	private OrientationEventListener orientationEventListener = null;
+	/*private OrientationEventListener orientationEventListener = null;*/
 	private boolean supports_auto_stabilise = false;
 	private boolean supports_camera2 = false;
 	private ArrayList<String> save_location_history = new ArrayList<String>();
@@ -98,18 +96,19 @@ public class MainActivity extends Activity {
 	private ToastBoxer switch_camera_toast = new ToastBoxer();
     private ToastBoxer screen_locked_toast = new ToastBoxer();
     private ToastBoxer changed_auto_stabilise_toast = new ToastBoxer();
-	private ToastBoxer exposure_lock_toast = new ToastBoxer();
 	private boolean block_startup_toast = false;
     
 	// for testing:
 	public boolean is_test = false;
 	public Bitmap gallery_bitmap = null;
-	public boolean test_low_memory = false;
-	public boolean test_have_angle = false;
-	public float test_angle = 0.0f;
 	public String test_last_saved_image = null;
-	
-	@Override
+
+    @Override
+    public SharedPreferences getSharedPreferences(String name, int mode) {
+        return super.getSharedPreferences(name, mode);
+    }
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		if( MyDebug.LOG ) {
 			Log.d(TAG, "onCreate");
@@ -193,12 +192,12 @@ public class MainActivity extends Activity {
 	    View switchCameraButton = (View) findViewById(R.id.switch_camera);
 	    switchCameraButton.setVisibility(preview.getCameraControllerManager().getNumberOfCameras() > 1 ? View.VISIBLE : View.GONE);
 
-	    orientationEventListener = new OrientationEventListener(this) {
+	    /*orientationEventListener = new OrientationEventListener(this) {
 			@Override
 			public void onOrientationChanged(int orientation) {
 				MainActivity.this.onOrientationChanged(orientation);
 			}
-        };
+        };*/
 
         View galleryButton = (View)findViewById(R.id.gallery);
         galleryButton.setOnLongClickListener(new View.OnLongClickListener() {
@@ -212,7 +211,7 @@ public class MainActivity extends Activity {
         
         gestureDetector = new GestureDetector(this, new MyGestureDetector());
         
-        View decorView = getWindow().getDecorView();
+        /*View decorView = getWindow().getDecorView();
         decorView.setOnSystemUiVisibilityChangeListener
                 (new View.OnSystemUiVisibilityChangeListener() {
             @Override
@@ -241,7 +240,7 @@ public class MainActivity extends Activity {
                 	applicationInterface.setImmersiveMode(true);
                 }
             }
-        });
+        });*/
 
 		boolean has_done_first_time = sharedPreferences.contains(PreferenceKeys.getFirstTimePreferenceKey());
         if( !has_done_first_time && !is_test ) {
@@ -255,9 +254,9 @@ public class MainActivity extends Activity {
         }
 
         preloadIcons(R.array.flash_icons);
-        preloadIcons(R.array.focus_mode_icons);
+        /*preloadIcons(R.array.focus_mode_icons);*/
 
-        textToSpeechSuccess = false;
+        /*textToSpeechSuccess = false;
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
 			@Override
 			public void onInit(int status) {
@@ -273,7 +272,7 @@ public class MainActivity extends Activity {
 						Log.d(TAG, "TextToSpeech failed");
 				}
 			}
-		});
+		});*/
 
 		if( MyDebug.LOG )
 			Log.d(TAG, "time for Activity startup: " + (System.currentTimeMillis() - time_s));
@@ -333,13 +332,13 @@ public class MainActivity extends Activity {
 			entry.getValue().recycle();
 		}
 		preloaded_bitmap_resources.clear();
-	    if( textToSpeech != null ) {
+	    /*if( textToSpeech != null ) {
 	    	// http://stackoverflow.com/questions/4242401/tts-error-leaked-serviceconnection-android-speech-tts-texttospeech-solved
 	        Log.d(TAG, "free textToSpeech");
 	    	textToSpeech.stop();
 	    	textToSpeech.shutdown();
 	    	textToSpeech = null;
-	    }
+	    }*/
 	    super.onDestroy();
 	}
 	
@@ -370,7 +369,7 @@ public class MainActivity extends Activity {
 	            	takePicture();
 	                return true;
 	    		}
-	    		else if( volume_keys.equals("volume_focus") ) {
+	    		/*else if( volume_keys.equals("volume_focus") ) {
 	    			if( preview.getCurrentFocusValue() != null && preview.getCurrentFocusValue().equals("focus_mode_manual2") ) {
 		    			if( keyCode == KeyEvent.KEYCODE_VOLUME_UP )
 		    				this.changeFocusDistance(-1);
@@ -381,7 +380,7 @@ public class MainActivity extends Activity {
 	    				preview.requestAutoFocus();
 	    			}
 					return true;
-	    		}
+	    		}*/
 	    		else if( volume_keys.equals("volume_exposure") ) {
 	    			if( preview.getCameraController() != null ) {
 		    			String value = sharedPreferences.getString(PreferenceKeys.getISOPreferenceKey(), preview.getCameraController().getDefaultISO());
@@ -516,7 +515,7 @@ public class MainActivity extends Activity {
 
         /*mSensorManager.registerListener(accelerometerListener, mSensorAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);*/
         mSensorManager.registerListener(magneticListener, mSensorMagnetic, SensorManager.SENSOR_DELAY_NORMAL);
-        orientationEventListener.enable();
+        /*orientationEventListener.enable();*/
 
         applicationInterface.getLocationSupplier().setupLocationListener();
         
@@ -553,7 +552,7 @@ public class MainActivity extends Activity {
 		closePopup();
         /*mSensorManager.unregisterListener(accelerometerListener);*/
         mSensorManager.unregisterListener(magneticListener);
-        orientationEventListener.disable();
+        /*orientationEventListener.disable();*/
         applicationInterface.getLocationSupplier().freeLocationListeners();
 		releaseSound();
 		preview.onPause();
@@ -650,20 +649,21 @@ public class MainActivity extends Activity {
 			view.setLayoutParams(layoutParams);
 			view.setRotation(ui_rotation);
 	
-			view = findViewById(R.id.exposure_lock);
+			/*view = findViewById(R.id.exposure_lock);
 			layoutParams = (RelativeLayout.LayoutParams)view.getLayoutParams();
 			layoutParams.addRule(align_parent_top, RelativeLayout.TRUE);
 			layoutParams.addRule(align_parent_bottom, 0);
 			layoutParams.addRule(left_of, R.id.popup);
 			layoutParams.addRule(right_of, 0);
 			view.setLayoutParams(layoutParams);
-			view.setRotation(ui_rotation);
+			view.setRotation(ui_rotation);*/
 	
 			view = findViewById(R.id.exposure);
 			layoutParams = (RelativeLayout.LayoutParams)view.getLayoutParams();
 			layoutParams.addRule(align_parent_top, RelativeLayout.TRUE);
 			layoutParams.addRule(align_parent_bottom, 0);
-			layoutParams.addRule(left_of, R.id.exposure_lock);
+			/*layoutParams.addRule(left_of, R.id.exposure_lock);*/
+			layoutParams.addRule(left_of, R.id.popup);
 			layoutParams.addRule(right_of, 0);
 			view.setLayoutParams(layoutParams);
 			view.setRotation(ui_rotation);
@@ -712,23 +712,6 @@ public class MainActivity extends Activity {
 			layoutParams.addRule(align_parent_right, RelativeLayout.TRUE);
 			view.setLayoutParams(layoutParams);
 			view.setRotation(ui_rotation);
-	
-			/*view = findViewById(R.id.zoom);
-			layoutParams = (RelativeLayout.LayoutParams)view.getLayoutParams();
-			layoutParams.addRule(align_parent_left, 0);
-			layoutParams.addRule(align_parent_right, RelativeLayout.TRUE);
-			layoutParams.addRule(align_parent_top, 0);
-			layoutParams.addRule(align_parent_bottom, RelativeLayout.TRUE);
-			view.setLayoutParams(layoutParams);
-			view.setRotation(180.0f); // should always match the zoom_seekbar, so that zoom in and out are in the same directions
-	
-			view = findViewById(R.id.zoom_seekbar);
-			layoutParams = (RelativeLayout.LayoutParams)view.getLayoutParams();
-			layoutParams.addRule(align_left, 0);
-			layoutParams.addRule(align_right, R.id.zoom);
-			layoutParams.addRule(above, R.id.zoom);
-			layoutParams.addRule(below, 0);
-			view.setLayoutParams(layoutParams);*/
 
 			view = findViewById(R.id.focus_seekbar);
 			layoutParams = (RelativeLayout.LayoutParams)view.getLayoutParams();
@@ -880,12 +863,12 @@ public class MainActivity extends Activity {
     	return this.ui_placement_right;
     }
 
-    private void onOrientationChanged(int orientation) {
-		/*if( MyDebug.LOG ) {
+    /*private void onOrientationChanged(int orientation) {
+		*//*if( MyDebug.LOG ) {
 			Log.d(TAG, "onOrientationChanged()");
 			Log.d(TAG, "orientation: " + orientation);
 			Log.d(TAG, "current_orientation: " + current_orientation);
-		}*/
+		}*//*
 		if( orientation == OrientationEventListener.ORIENTATION_UNKNOWN )
 			return;
 		int diff = Math.abs(orientation - current_orientation);
@@ -903,7 +886,7 @@ public class MainActivity extends Activity {
 				layoutUI();
 		    }
 		}
-	}
+	}*/
     
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -1052,14 +1035,14 @@ public class MainActivity extends Activity {
 		seekBar.setProgress(percent);
 	}
     
-    public void clickedExposureLock(View view) {
+    /*public void clickedExposureLock(View view) {
 		if( MyDebug.LOG )
 			Log.d(TAG, "clickedExposureLock");
     	this.preview.toggleExposureLock();
 	    ImageButton exposureLockButton = (ImageButton) findViewById(R.id.exposure_lock);
 		exposureLockButton.setImageResource(preview.isExposureLocked() ? R.drawable.exposure_locked : R.drawable.exposure_unlocked);
 		preview.showToast(exposure_lock_toast, preview.isExposureLocked() ? R.string.exposure_locked : R.string.exposure_unlocked);
-    }
+    }*/
     
     public void clickedSettings(View view) {
 		if( MyDebug.LOG )
@@ -1261,7 +1244,7 @@ public class MainActivity extends Activity {
 		}*/
 		
 		putBundleExtra(bundle, "flash_values", this.preview.getSupportedFlashValues());
-		putBundleExtra(bundle, "focus_values", this.preview.getSupportedFocusValues());
+		/*putBundleExtra(bundle, "focus_values", this.preview.getSupportedFocusValues());*/
 
 		setWindowFlagsForSettings();
 		MyPreferenceFragment fragment = new MyPreferenceFragment();
@@ -1280,16 +1263,16 @@ public class MainActivity extends Activity {
 				Log.d(TAG, "toast_message: " + toast_message);
 			}
 		}
-    	String saved_focus_value = null;
-    	/*if( preview.getCameraController() != null && preview.isVideo() && !preview.focusIsVideo() ) {
+    	/*String saved_focus_value = null;
+    	*//*if( preview.getCameraController() != null && preview.isVideo() && !preview.focusIsVideo() ) {
     		saved_focus_value = preview.getCurrentFocusValue(); // n.b., may still be null
 			// make sure we're into continuous video mode
 			// workaround for bug on Samsung Galaxy S5 with UHD, where if the user switches to another (non-continuous-video) focus mode, then goes to Settings, then returns and records video, the preview freezes and the video is corrupted
 			// so to be safe, we always reset to continuous video mode, and then reset it afterwards
 			preview.updateFocusForVideo(false);
-    	}*/
+    	}*//*
 		if( MyDebug.LOG )
-			Log.d(TAG, "saved_focus_value: " + saved_focus_value);
+			Log.d(TAG, "saved_focus_value: " + saved_focus_value);*/
     	
 		updateFolderHistory();
 
@@ -1327,11 +1310,11 @@ public class MainActivity extends Activity {
 		if( toast_message != null && toast_message.length() > 0 )
 			preview.showToast(null, toast_message);
 
-    	if( saved_focus_value != null ) {
+    	/*if( saved_focus_value != null ) {
 			if( MyDebug.LOG )
 				Log.d(TAG, "switch focus back to: " + saved_focus_value);
     		preview.updateFocus(saved_focus_value, true, false);
-    	}
+    	}*/
     }
     
     MyPreferenceFragment getPreferenceFragment() {
@@ -1435,22 +1418,22 @@ public class MainActivity extends Activity {
     		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, widgetIds);
     		sendBroadcast(intent);    		
     	}*/
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		/*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);*/
 
 		// force to landscape mode
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// keep screen active - see http://stackoverflow.com/questions/2131948/force-screen-on
-		if( sharedPreferences.getBoolean(PreferenceKeys.getKeepDisplayOnPreferenceKey(), true) ) {
-			if( MyDebug.LOG )
-				Log.d(TAG, "do keep screen on");
-			getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		}
+		/*if( sharedPreferences.getBoolean(PreferenceKeys.getKeepDisplayOnPreferenceKey(), true) ) {*/
+        if( MyDebug.LOG )
+            Log.d(TAG, "do keep screen on");
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		/*}
 		else {
 			if( MyDebug.LOG )
 				Log.d(TAG, "don't keep screen on");
 			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		}
-		if( sharedPreferences.getBoolean(PreferenceKeys.getShowWhenLockedPreferenceKey(), true) ) {
+		}*/
+		/*if( sharedPreferences.getBoolean(PreferenceKeys.getShowWhenLockedPreferenceKey(), true) ) {
 			if( MyDebug.LOG )
 				Log.d(TAG, "do show when locked");
 	        // keep Open Camera on top of screen-lock (will still need to unlock when going to gallery or settings)
@@ -1460,11 +1443,15 @@ public class MainActivity extends Activity {
 			if( MyDebug.LOG )
 				Log.d(TAG, "don't show when locked");
 	        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-		}
+		}*/
 
         // set screen to max brightness - see http://stackoverflow.com/questions/11978042/android-screen-brightness-max-value
 		// done here rather than onCreate, so that changing it in preferences takes effect without restarting app
-		{
+
+        WindowManager.LayoutParams layout = getWindow().getAttributes();
+        layout.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+        getWindow().setAttributes(layout);
+		/*{
 	        WindowManager.LayoutParams layout = getWindow().getAttributes();
 			if( sharedPreferences.getBoolean(PreferenceKeys.getMaxBrightnessPreferenceKey(), true) ) {
 		        layout.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
@@ -1473,15 +1460,15 @@ public class MainActivity extends Activity {
 		        layout.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
 			}
 	        getWindow().setAttributes(layout); 
-		}
+		}*/
 		
-		initImmersiveMode();
+		/*initImmersiveMode();*/
 		camera_in_background = false;
     }
     
     private void setWindowFlagsForSettings() {
 		// allow screen rotation
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		// revert to standard screen blank behaviour
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         // settings should still be protected by screen lock
@@ -1987,7 +1974,7 @@ public class MainActivity extends Activity {
 		if( MyDebug.LOG )
 			Log.d(TAG, "cameraSetup");
 
-		{
+		/*{
 			if( MyDebug.LOG )
 				Log.d(TAG, "set up manual focus");
 		    SeekBar focusSeekBar = (SeekBar) findViewById(R.id.focus_seekbar);
@@ -2012,7 +1999,7 @@ public class MainActivity extends Activity {
 			});
 	    	final int visibility = preview.getCurrentFocusValue() != null && this.getPreview().getCurrentFocusValue().equals("focus_mode_manual2") ? View.VISIBLE : View.INVISIBLE;
 		    focusSeekBar.setVisibility(visibility);
-		}
+		}*/
 		{
 			if( preview.supportsISORange()) {
 				if( MyDebug.LOG )
@@ -2126,11 +2113,11 @@ public class MainActivity extends Activity {
 		View exposureButton = (View) findViewById(R.id.exposure);
 	    exposureButton.setVisibility(supportsExposureButton() && !applicationInterface.inImmersiveMode() ? View.VISIBLE : View.GONE);
 
-	    ImageButton exposureLockButton = (ImageButton) findViewById(R.id.exposure_lock);
+	    /*ImageButton exposureLockButton = (ImageButton) findViewById(R.id.exposure_lock);
 	    exposureLockButton.setVisibility(preview.supportsExposureLock() && !applicationInterface.inImmersiveMode() ? View.VISIBLE : View.GONE);
 	    if( preview.supportsExposureLock() ) {
 			exposureLockButton.setImageResource(preview.isExposureLocked() ? R.drawable.exposure_locked : R.drawable.exposure_unlocked);
-	    }
+	    }*/
 
 		setPopupIcon(); // needed so that the icon is set right even if no flash mode is set when starting up camera (e.g., switching to front camera with no flash)
 
@@ -2191,11 +2178,11 @@ public class MainActivity extends Activity {
 		return -1;
     }*/
     
-    public static String getDonateLink() {
+    /*public static String getDonateLink() {
     	return "https://play.google.com/store/apps/details?id=harman.mark.donation";
     }
 
-    /*public static String getDonateMarketLink() {
+    *//*public static String getDonateMarketLink() {
     	return "market://details?id=harman.mark.donation";
     }*/
 
@@ -2231,7 +2218,7 @@ public class MainActivity extends Activity {
 		String toast_string = getResources().getString(R.string.photo);
 		CameraController.Size current_size = preview.getCurrentPictureSize();
 		toast_string += " " + current_size.width + "x" + current_size.height;
-		if( preview.supportsFocus() && preview.getSupportedFocusValues().size() > 1 ) {
+		/*if( preview.supportsFocus() && preview.getSupportedFocusValues().size() > 1 ) {
 			String focus_value = preview.getCurrentFocusValue();
 			if( focus_value != null && !focus_value.equals("focus_mode_auto") ) {
 				String focus_entry = preview.findFocusEntryForValue(focus_value);
@@ -2239,7 +2226,7 @@ public class MainActivity extends Activity {
 					toast_string += "\n" + focus_entry;
 				}
 			}
-		}
+		}*/
 		String iso_value = sharedPreferences.getString(PreferenceKeys.getISOPreferenceKey(), camera_controller.getDefaultISO());
 		if( !iso_value.equals(camera_controller.getDefaultISO()) ) {
 			toast_string += "\nISO: " + iso_value;
@@ -2264,7 +2251,7 @@ public class MainActivity extends Activity {
     	if( color_effect != null && !color_effect.equals(camera_controller.getDefaultColorEffect()) ) {
     		toast_string += "\n" + getResources().getString(R.string.color_effect) + ": " + color_effect;
     	}
-		String lock_orientation = sharedPreferences.getString(PreferenceKeys.getLockOrientationPreferenceKey(), "none");
+		/*String lock_orientation = sharedPreferences.getString(PreferenceKeys.getLockOrientationPreferenceKey(), "none");
 		if( !lock_orientation.equals("none") ) {
 			String [] entries_array = getResources().getStringArray(R.array.preference_lock_orientation_entries);
 			String [] values_array = getResources().getStringArray(R.array.preference_lock_orientation_values);
@@ -2273,7 +2260,7 @@ public class MainActivity extends Activity {
 				String entry = entries_array[index];
 				toast_string += "\n" + entry;
 			}
-		}
+		}*/
 		String timer = sharedPreferences.getString(PreferenceKeys.getTimerPreferenceKey(), "0");
 		if( !timer.equals("0") ) {
 			String [] entries_array = getResources().getStringArray(R.array.preference_timer_entries);

@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,7 +18,6 @@ import android.graphics.RectF;
 import android.location.Location;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,10 +27,8 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Pair;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.SeekBar;
 
 import net.sourceforge.opencamera.CameraController.CameraController;
 import net.sourceforge.opencamera.Preview.ApplicationInterface;
@@ -48,7 +44,6 @@ import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class MyApplicationInterface implements ApplicationInterface {
@@ -159,11 +154,11 @@ public class MyApplicationInterface implements ApplicationInterface {
 		return sharedPreferences.getString(PreferenceKeys.getFlashPreferenceKey(cameraId), "");
     }
 
-    @Override
+    /*@Override
 	public String getFocusPref() {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 		return sharedPreferences.getString(PreferenceKeys.getFocusPreferenceKey(cameraId), "");
-    }
+    }*/
 
     @Override
 	public String getSceneModePref() {
@@ -281,12 +276,6 @@ public class MyApplicationInterface implements ApplicationInterface {
     public String getPreviewRotationPref() {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
     	return sharedPreferences.getString(PreferenceKeys.getRotatePreviewPreferenceKey(), "0");
-    }
-    
-    @Override
-    public String getLockOrientationPref() {
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-    	return sharedPreferences.getString(PreferenceKeys.getLockOrientationPreferenceKey(), "none");
     }
 
     @Override
@@ -494,7 +483,7 @@ public class MyApplicationInterface implements ApplicationInterface {
 				// n.b., don't hide share and trash buttons, as they require immediate user input for us to continue
 				View switchCameraButton = (View) main_activity.findViewById(R.id.switch_camera);
 				View exposureButton = (View) main_activity.findViewById(R.id.exposure);
-				View exposureLockButton = (View) main_activity.findViewById(R.id.exposure_lock);
+				/*View exposureLockButton = (View) main_activity.findViewById(R.id.exposure_lock);*/
 				View popupButton = (View) main_activity.findViewById(R.id.popup);
 				View galleryButton = (View) main_activity.findViewById(R.id.gallery);
 				View settingsButton = (View) main_activity.findViewById(R.id.settings);
@@ -502,8 +491,8 @@ public class MyApplicationInterface implements ApplicationInterface {
 					switchCameraButton.setVisibility(visibility);
 				if (main_activity.supportsExposureButton())
 					exposureButton.setVisibility(visibility);
-				if (main_activity.getPreview().supportsExposureLock())
-					exposureLockButton.setVisibility(visibility);
+				/*if (main_activity.getPreview().supportsExposureLock())
+					exposureLockButton.setVisibility(visibility);*/
 				popupButton.setVisibility(visibility);
 				galleryButton.setVisibility(visibility);
 				settingsButton.setVisibility(visibility);
@@ -539,14 +528,14 @@ public class MyApplicationInterface implements ApplicationInterface {
 				final int visibility = show ? View.VISIBLE : View.GONE;
 				View switchCameraButton = (View) main_activity.findViewById(R.id.switch_camera);
 				View exposureButton = (View) main_activity.findViewById(R.id.exposure);
-				View exposureLockButton = (View) main_activity.findViewById(R.id.exposure_lock);
+				/*View exposureLockButton = (View) main_activity.findViewById(R.id.exposure_lock);*/
 				View popupButton = (View) main_activity.findViewById(R.id.popup);
 				if (main_activity.getPreview().getCameraControllerManager().getNumberOfCameras() > 1)
 					switchCameraButton.setVisibility(visibility);
 				if (main_activity.supportsExposureButton()) // still allow exposure when recording video
 					exposureButton.setVisibility(visibility);
-				if (main_activity.getPreview().supportsExposureLock()) // still allow exposure lock when recording video
-					exposureLockButton.setVisibility(visibility);
+				/*if (main_activity.getPreview().supportsExposureLock()) // still allow exposure lock when recording video
+					exposureLockButton.setVisibility(visibility);*/
 				if (!show) {
 					main_activity.closePopup(); // we still allow the popup when recording video, but need to update the UI (so it only shows flash options), so easiest to just close
 				}
@@ -635,7 +624,7 @@ public class MyApplicationInterface implements ApplicationInterface {
 		editor.apply();
     }
 
-    @Override
+    /*@Override
     public void setFocusPref(String focus_value) {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
 		SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -645,7 +634,7 @@ public class MyApplicationInterface implements ApplicationInterface {
     	final int visibility = main_activity.getPreview().getCurrentFocusValue() != null && main_activity.getPreview().getCurrentFocusValue().equals("focus_mode_manual2") ? View.VISIBLE : View.INVISIBLE;
 	    View focusSeekBar = (SeekBar) main_activity.findViewById(R.id.focus_seekbar);
 	    focusSeekBar.setVisibility(visibility);
-    }
+    }*/
 
     @Override
     public void setSceneModePref(String scene_mode) {
@@ -760,11 +749,11 @@ public class MyApplicationInterface implements ApplicationInterface {
 		this.focus_distance = focus_distance;
 	}
 
-    private int getAngleHighlightColor() {
+    /*private int getAngleHighlightColor() {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());
 		String color = sharedPreferences.getString(PreferenceKeys.getShowAngleHighlightColorPreferenceKey(), "#14e715");
 		return Color.parseColor(color);
-    }
+    }*/
 
     private int getStampFontColor() {
 		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getContext());

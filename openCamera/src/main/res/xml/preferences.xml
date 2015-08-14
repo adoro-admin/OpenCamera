@@ -191,28 +191,11 @@
 	            android:defaultValue="IMG_"
 		        />
 
-	        <EditTextPreference
-	            android:key="preference_save_video_prefix"
-	            android:title="@string/preference_save_video_prefix"
-	            android:summary="@string/preference_save_video_prefix_summary"
-		        android:dialogTitle="@string/preference_save_video_prefix"
-		        android:dialogMessage="@string/preference_save_video_prefix_summary"
-		        android:inputType="text"
-	            android:defaultValue="VID_"
-		        />
-
 	       <CheckBoxPreference
                 android:key="preference_show_when_locked"
                 android:title="@string/preference_show_when_locked"
                 android:summary="@string/preference_show_when_locked_summary"
                 android:defaultValue="true"
-                />
-
-            <CheckBoxPreference
-                android:key="preference_lock_video"
-                android:title="@string/preference_lock_video"
-                android:summary="@string/preference_lock_video_summary"
-                android:defaultValue="false"
                 />
 
             <ListPreference 
@@ -258,84 +241,12 @@
                 android:entryValues="@array/preference_immersive_mode_values"
                 android:defaultValue="immersive_mode_low_profile"
                 />
-    
-            <CheckBoxPreference
-                android:key="preference_show_zoom"
-                android:title="@string/preference_show_zoom"
-                android:summary="@string/preference_show_zoom_summary"
-                android:defaultValue="true"
-                />
-        
-            <CheckBoxPreference
-                android:key="preference_show_zoom_controls"
-                android:title="@string/preference_show_zoom_controls"
-                android:summary="@string/preference_show_zoom_controls_summary"
-                android:defaultValue="false"
-                />
-        
-            <CheckBoxPreference
-                android:key="preference_show_zoom_slider_controls"
-                android:title="@string/preference_show_zoom_slider_controls"
-                android:summary="@string/preference_show_zoom_slider_controls_summary"
-                android:defaultValue="true"
-                />
 
             <!--  if we move this to another PreferenceGroup, we should update code to remove this Preference -->
             <CheckBoxPreference
                 android:key="preference_show_iso"
                 android:title="@string/preference_show_iso"
                 android:summary="@string/preference_show_iso_summary"
-                android:defaultValue="true"
-                />
-        
-            <CheckBoxPreference
-                android:key="preference_free_memory"
-                android:title="@string/preference_free_memory"
-                android:summary="@string/preference_free_memory_summary"
-                android:defaultValue="true"
-                />
-        
-            <CheckBoxPreference
-                android:key="preference_show_angle"
-                android:title="@string/preference_show_angle"
-                android:summary="@string/preference_show_angle_summary"
-                android:defaultValue="true"
-                />
-
-            <CheckBoxPreference
-                android:key="preference_show_angle_line"
-                android:title="@string/preference_show_angle_line"
-                android:summary="@string/preference_show_angle_line_summary"
-                android:defaultValue="false"
-                />
-
-            <ListPreference 
-                android:key="preference_angle_highlight_color"
-                android:title="@string/preference_angle_highlight_color"
-                android:summary="@string/preference_angle_highlight_color_summary"
-                android:entries="@array/preference_angle_highlight_color_entries"
-                android:entryValues="@array/preference_angle_highlight_color_values"
-                android:defaultValue="#14e715"
-                />
-
-            <CheckBoxPreference
-                android:key="preference_show_geo_direction"
-                android:title="@string/preference_show_geo_direction"
-                android:summary="@string/preference_show_geo_direction_summary"
-                android:defaultValue="true"
-                />
-
-            <CheckBoxPreference
-                android:key="preference_show_time"
-                android:title="@string/preference_show_time"
-                android:summary="@string/preference_show_time_summary"
-                android:defaultValue="true"
-                />
-
-            <CheckBoxPreference
-                android:key="preference_show_battery"
-                android:title="@string/preference_show_battery"
-                android:summary="@string/preference_show_battery_summary"
                 android:defaultValue="true"
                 />
 
@@ -486,104 +397,6 @@
 
         </PreferenceScreen>
 
-	    <PreferenceScreen
-	        android:key="preference_screen_video_settings"
-	        android:title="@string/preference_screen_video_settings"
-	        android:persistent="false">
-
-	        <!--  if we move this to another PreferenceGroup, we should update code to remove this Preference -->
-	        <ListPreference 
-	            android:key="preference_video_quality"
-	            android:title="@string/video_quality"
-	            android:summary="@string/video_quality_summary"
-	            />
-
-	        <!--  if we move this to another PreferenceGroup, we should update code for the findPreference() call -->
-	        <CheckBoxPreference
-	            android:key="preference_force_video_4k"
-	            android:title="@string/preference_force_video_4k"
-	            android:summary="@string/preference_force_video_4k_summary"
-	            android:defaultValue="false"
-	            />
-
-            <!--  if we move this to another PreferenceGroup, we should update code for the findPreference() call -->
-            <CheckBoxPreference
-                android:key="preference_video_stabilization"
-                android:title="@string/preference_video_stabilization"
-                android:summary="@string/preference_video_stabilization_summary"
-                android:defaultValue="false"
-                />
-
-	        <ListPreference 
-                android:key="preference_video_bitrate"
-                android:title="@string/preference_video_bitrate"
-                android:summary="@string/preference_video_bitrate_summary"
-                android:entries="@array/preference_video_bitrate_entries"
-                android:entryValues="@array/preference_video_bitrate_values"
-                android:defaultValue="default"
-                />
-
-            <ListPreference 
-                android:key="preference_video_fps"
-                android:title="@string/preference_video_fps"
-                android:summary="@string/preference_video_fps_summary"
-                android:entries="@array/preference_video_fps_entries"
-                android:entryValues="@array/preference_video_fps_values"
-                android:defaultValue="default"
-                />
-
-            <ListPreference 
-                android:key="preference_video_max_duration"
-                android:title="@string/preference_video_max_duration"
-                android:summary="@string/preference_video_max_duration_summary"
-                android:entries="@array/preference_video_max_duration_entries"
-                android:entryValues="@array/preference_video_max_duration_values"
-                android:defaultValue="0"
-                />
-
-            <ListPreference 
-                android:key="preference_video_restart"
-                android:title="@string/preference_video_restart"
-                android:summary="@string/preference_video_restart_summary"
-                android:entries="@array/preference_video_restart_entries"
-                android:entryValues="@array/preference_video_restart_values"
-                android:defaultValue="0"
-                />
-
-	        <CheckBoxPreference
-	            android:key="preference_record_audio"
-	            android:title="@string/preference_record_audio"
-	            android:summary="@string/preference_record_audio_summary"
-	            android:defaultValue="true"
-	            />
-
-	        <ListPreference 
-                android:key="preference_record_audio_src"
-                android:title="@string/preference_record_audio_src"
-                android:summary="@string/preference_record_audio_src_summary"
-                android:entries="@array/preference_record_audio_src_entries"
-                android:entryValues="@array/preference_record_audio_src_values"
-                android:defaultValue="audio_src_camcorder"
-                />
-
-            <ListPreference 
-                android:key="preference_record_audio_channels"
-                android:title="@string/preference_record_audio_channels"
-                android:summary="@string/preference_record_audio_channels_summary"
-                android:entries="@array/preference_record_audio_channels_entries"
-                android:entryValues="@array/preference_record_audio_channels_values"
-                android:defaultValue="audio_default"
-                />
-
-	        <CheckBoxPreference
-                android:key="preference_video_flash"
-                android:title="@string/preference_video_flash"
-                android:summary="@string/preference_video_flash_summary"
-                android:defaultValue="false"
-                />
-
-	    </PreferenceScreen>
-
 		<PreferenceScreen
 	        android:key="preference_screen_location_settings"
 	        android:title="@string/preference_screen_location_settings"
@@ -614,43 +427,19 @@
 	        
 	</PreferenceCategory>
 
-    <PreferenceCategory
+    <!--<PreferenceCategory
         android:key="preference_category_online"
         android:title="@string/preference_category_online"
         >
 
-        <Preference
-		    android:key="preference_online_help"  
-		    android:title="@string/preference_online_help"
-            android:summary="@string/preference_online_help"  
-		    />  
-
-        <Preference
-            android:key="preference_donate"  
-            android:title="@string/preference_donate"
-            android:summary="@string/preference_donate_summary"  
-            />  
-
-        <!--  if we move this to another PreferenceGroup, we should update code for the findPreference() call -->
+        &lt;!&ndash;  if we move this to another PreferenceGroup, we should update code for the findPreference() call &ndash;&gt;
         <CheckBoxPreference
             android:key="preference_use_camera2"  
             android:title="@string/preference_use_camera2"
             android:summary="@string/preference_use_camera2_summary"  
             android:defaultValue="false"
-            />  
-        
-        <Preference
-            android:key="preference_about"  
-            android:title="@string/preference_about"
-            android:summary="@string/preference_about_summary"  
-            />  
-        
-        <Preference
-            android:key="preference_reset"  
-            android:title="@string/preference_reset"
-            android:summary="@string/preference_reset_summary"  
             />
         
-        </PreferenceCategory>
+        </PreferenceCategory>-->
         
 </PreferenceScreen>

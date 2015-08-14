@@ -17,9 +17,9 @@ public class PreferenceKeys {
     	return "flash_value_" + cameraId;
     }
 
-    public static String getFocusPreferenceKey(int cameraId) {
+    /*public static String getFocusPreferenceKey(int cameraId) {
     	return "focus_value_" + cameraId;
-    }
+    }*/
 
     public static String getResolutionPreferenceKey(int cameraId) {
     	return "camera_resolution_" + cameraId;
@@ -124,18 +124,6 @@ public class PreferenceKeys {
     public static String getThumbnailAnimationPreferenceKey() {
     	return "preference_thumbnail_animation";
     }
-
-    public static String getShowWhenLockedPreferenceKey() {
-    	return "preference_show_when_locked";
-    }
-
-    public static String getKeepDisplayOnPreferenceKey() {
-    	return "preference_keep_display_on";
-    }
-
-    public static String getMaxBrightnessPreferenceKey() {
-    	return "preference_max_brightness";
-    }
     
     public static String getUsingSAFPreferenceKey() {
     	return "preference_using_saf";
@@ -155,34 +143,6 @@ public class PreferenceKeys {
 
     public static String getShowISOPreferenceKey() {
     	return "preference_show_iso";
-    }
-
-    public static String getShowAnglePreferenceKey() {
-    	return "preference_show_angle";
-    }
-    
-    public static String getShowAngleLinePreferenceKey() {
-    	return "preference_show_angle_line";
-    }
-    
-    public static String getShowAngleHighlightColorPreferenceKey() {
-    	return "preference_angle_highlight_color";
-    }
-
-    public static String getShowGeoDirectionPreferenceKey() {
-    	return "preference_show_geo_direction";
-    }
-    
-    public static String getShowFreeMemoryPreferenceKey() {
-    	return "preference_free_memory";
-    }
-    
-    public static String getShowTimePreferenceKey() {
-    	return "preference_show_time";
-    }
-    
-    public static String getShowBatteryPreferenceKey() {
-    	return "preference_show_battery";
     }
     
     public static String getShowGridPreferenceKey() {
@@ -205,9 +165,6 @@ public class PreferenceKeys {
     	return "preference_rotate_preview";
     }
 
-    public static String getLockOrientationPreferenceKey() {
-    	return "preference_lock_orientation";
-    }
 
     public static String getTimerPreferenceKey() {
     	return "preference_timer";
